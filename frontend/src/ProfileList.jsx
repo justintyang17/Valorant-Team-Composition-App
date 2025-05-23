@@ -1,6 +1,21 @@
 import React from "react"
 
-const ProfileList = ({profiles}) => {
+const ProfileList = ({profiles, updateProfile, updateCallback}) => {
+    const onDelete = async (id) => {
+        try {
+            const options = {
+                method: "DELETE"
+            }
+            const response = await fetch(`http://127.0.0.1:5000/delete_profile/${id}`, options)
+            if (response.status === 200) {
+                updateCallback()
+            } else {
+                console.error("Failed to Delete")
+            }
+        } catch (error) {
+            alert(error)
+        }
+    }
     return <div>
         <h2> Profiles</h2>
         <table>
@@ -18,8 +33,8 @@ const ProfileList = ({profiles}) => {
                         <td>{profile.playerUser}</td>
                         <td>{profile.playerRank}</td>
                         <td>
-                            <button>Update Profile</button>
-                            <button>Delete Profile</button>
+                            <button onClick={() => updateProfile(profile)}>Edit</button>
+                            <button onClick={() => onDelete(profile.id)}>Delete</button>
                         </td>
                     </tr>
                 ))}

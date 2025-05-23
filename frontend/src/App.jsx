@@ -7,6 +7,7 @@ import './App.css'
 function App() {
     const [profiles, setProfiles] = useState([])
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [currentProfile, setCurrentProfile] = useState([])
 
     useEffect(() => {
         fetchProfiles()
@@ -20,6 +21,7 @@ function App() {
 
     const closeModal = () => {
         setIsModalOpen(false)
+        setCurrentProfile({})
     }
 
     const openCreateModal =() => {
@@ -28,14 +30,28 @@ function App() {
         }
     }
 
+    const openEditModal = (profile) => {
+        if (isModalOpen) {
+            return
+        } else {
+            setCurrentProfile(profile)
+            setIsModalOpen(true)
+        }
+    }
+
+    const onUpdate = () => {
+        closeModal()
+        fetchProfiles()
+    }
+
     return (
         <>
-        <ProfileList profiles={profiles} />
+        <ProfileList profiles={profiles} updateProfile = {openEditModal} updateCallback={onUpdate}/>
         <button onClick={openCreateModal}>Create New Profile</button>
         {isModalOpen && <div className="modal">
             <div className="modal-content">
                 <span className="close" onClick={closeModal}>&times;</span>
-                <ProfileForm />
+                <ProfileForm existingProfile={currentProfile} updateCallback={onUpdate}/>
                 </div>
             </div>
             }

@@ -26,12 +26,22 @@ def create_profile():
     new_profile = PlayerProfile(player_name = player_name, player_user = player_user, player_rank = player_rank)
     # try adding newly created Profile to Database, else return error message
     try:
+        # Start: Modified
+        profiles = PlayerProfile.query.all()
+        for p in profiles:
+            if (p.player_user == player_user):
+                raise Exception("ERROR: player with given username already exist")
+        # End: Modified
         db.session.add(new_profile)
         db.session.commit()
     except Exception as e:
         return jsonify({"message": str(e)}), 400
     
-    return jsonify({"message": "new profile sucessfully created"}), 200
+    profiles = PlayerProfile.query.all()
+
+
+    
+    return jsonify({"message": "new profile sucessfully created"}), 201
 
 # 3) Update Profile
 @app.route("/update_profile/<int:user_id>", methods=["PATCH"])
@@ -44,9 +54,19 @@ def update_profile(user_id):
     
     # data = JSON data in database
     data = request.json
+
+    new_player_user = data.get("playerUser", profile.player_user)
+
+    existing_user = PlayerProfile.query.filter(
+        PlayerProfile.player_user == new_player_user,
+        PlayerProfile.id != user_id
+    ).first()
+    if existing_user:
+        return jsonify({"message": "ERROR: player with given username already exists"}), 409
+
     # modify the given profile's fields if new info is provided for that field
-    profile.player_name = data.get("playerName", profile.player_name)
-    profile.player_user = data.get("playerUser", profile.player_user)
+    profile.player_name = data.get("playerName", profile.player_name)   
+    profile.player_user = new_player_user
     profile.player_rank = data.get("playerRank", profile.player_rank)
 
     db.session.commit()

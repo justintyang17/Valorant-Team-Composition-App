@@ -1,9 +1,12 @@
 import { useState } from "react"
 
-const ProfileForm = ({ }) => {
-    const [playerName, setPlayerName] = useState("")
-    const [playerUser, setPlayerUser] = useState("")
-    const [playerRank, setPlayerRank] = useState("")
+const ProfileForm = ({existingProfile ={}, updateCallback}) => {
+    const [playerName, setPlayerName] = useState(existingProfile.playerName || "")
+    const [playerUser, setPlayerUser] = useState(existingProfile.playerUser || "")
+    const [playerRank, setPlayerRank] = useState(existingProfile.playerRank || "")
+
+    const updating = Object.entries(existingProfile).length !== 0
+
 
     const onSubmit = async (e) => {
         e.preventDefault()
@@ -13,9 +16,9 @@ const ProfileForm = ({ }) => {
             playerUser,
             playerRank
         }
-        const url = "http://127.0.0.1:5000/create_profile"
+        const url = "http://127.0.0.1:5000/" + (updating ? `update_profile/${existingProfile.id}` : "create_profile")
         const options = {
-            method: "POST",
+            method: (updating ? "PATCH" : "POST"),
             headers: {
                 "Content-Type": "application/json"
             },
@@ -26,7 +29,7 @@ const ProfileForm = ({ }) => {
             const data = await response.json()
             alert(data.message)
         } else {
-            //success
+            updateCallback()
         }
     }
 
@@ -56,7 +59,7 @@ const ProfileForm = ({ }) => {
                 value={playerRank}
                 onChange={(e) => setPlayerRank(e.target.value)}/>
         </div>
-        <button type="submit">Create Player Profile</button>
+        <button type="submit">{updating ? "Update Profile" : "Add Profile"}</button>
     </form>
     );
 };
