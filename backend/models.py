@@ -5,8 +5,8 @@ class PlayerProfile(db.Model):
     # unique Database int ID
     id = db.Column(db.Integer, primary_key = True)
     player_name = db.Column(db.String(20), unique = False, nullable = False)
-    player_user = db.Column(db.String(16), unique = False, nullable = False)
-    player_rank = db.Column(db.String(16))
+    player_user = db.Column(db.String(16), unique = True, nullable = False)
+    player_rank = db.Column(db.String(16), unique = False, nullable = False)
     # player_agentpool = db.Column(...)
 
     # converts data into a dictionary 

@@ -66,17 +66,6 @@ def delete_profile(user_id):
     db.session.commit()
 
     return jsonify({"message": "profile sucessfully deleted"}), 200
-    
-    # data = JSON data in database
-    data = request.json
-    # modify the given profile's fields if new info is provided for that field
-    profile.player_name = data.get("playerName", profile.player_name)
-    profile.player_user = data.get("playerUser", profile.player_user)
-    profile.player_rank = data.get("playerRank", profile.player_rank)
-
-    db.session.commit()
-
-    return jsonify({"message": "profile sucessfully updated"}), 201
 
 # ensures file only runs when explicitly ran (not when imported)
 if __name__ == "__main__":
