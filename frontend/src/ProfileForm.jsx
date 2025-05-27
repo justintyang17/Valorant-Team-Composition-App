@@ -5,6 +5,15 @@ const ProfileForm = ({existingProfile ={}, updateCallback}) => {
     const [playerUser, setPlayerUser] = useState(existingProfile.playerUser || "")
     const [playerRank, setPlayerRank] = useState(existingProfile.playerRank || "")
 
+    const ranks = [
+        "IRON_1",
+        "IRON_2",
+        "IRON_3",
+        "BRONZE_1",
+        "BRONZE_2",
+        "BRONZE_3"
+      ];
+
     const updating = Object.entries(existingProfile).length !== 0
 
 
@@ -53,11 +62,17 @@ const ProfileForm = ({existingProfile ={}, updateCallback}) => {
         </div>
         <div>
             <label htmlFor="playerRank">Player's Rank</label>
-            <input
-                type="text"
+            <select
                 id="playerRank"
                 value={playerRank}
-                onChange={(e) => setPlayerRank(e.target.value)}/>
+                onChange={(e) => setPlayerRank(e.target.value)}
+            >
+                {ranks.map(rank => (
+                    <option key={rank} value ={rank}>
+                        {rank.replace('_', ' ')}
+                    </option>
+                ))}
+            </select>
         </div>
         <button type="submit">{updating ? "Update Profile" : "Add Profile"}</button>
     </form>

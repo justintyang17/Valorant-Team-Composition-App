@@ -31,7 +31,7 @@ const ProfileList = ({profiles, updateProfile, updateCallback}) => {
                     <tr key= {profile.id}>
                         <td>{profile.playerName}</td>
                         <td>{profile.playerUser}</td>
-                        <td>{profile.playerRank}</td>
+                        <td>{profile.playerRank.replace("_", " ")}</td>
                         <td>
                             <button onClick={() => updateProfile(profile)}>Edit</button>
                             <button onClick={() => onDelete(profile.id)}>Delete</button>

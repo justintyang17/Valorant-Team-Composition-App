@@ -2,7 +2,7 @@
 
 from flask import request, jsonify
 from config import app, db
-from models import PlayerProfile
+from models import PlayerProfile, RankEnum
 import re
 
 # 1) Get Profiles
@@ -19,11 +19,11 @@ def get_profiles():
 def create_profile():
     player_name = request.json.get("playerName")
     player_user = request.json.get("playerUser")
-    player_rank = request.json.get("playerRank")
-    if not player_name or not player_user or not player_rank:
+    player_rank_string = request.json.get("playerRank")
+
+    if not player_name or not player_user or not player_rank_string:
         return jsonify({"message": "ERROR: missing field"}), 400 # Status Message
     
-    new_profile = PlayerProfile(player_name = player_name, player_user = player_user, player_rank = player_rank)
     # try adding newly created Profile to Database, else return error message
     try:
         # Check if username is valid
@@ -35,17 +35,24 @@ def create_profile():
         for p in profiles:
             if (p.player_user == player_user):
                 raise Exception("ERROR: player with given username already exist")
-            
+        
+        # Check if rank is valid
+        try:
+            player_rank = RankEnum[player_rank_string].value
+        except KeyError:
+            raise Exception("ERROR: invalid player rank")
+
+        new_profile = PlayerProfile(
+        player_name=player_name,
+        player_user=player_user,
+        player_rank=player_rank
+        )
 
         db.session.add(new_profile)
         db.session.commit()
     except Exception as e:
         return jsonify({"message": str(e)}), 400
-    
-    profiles = PlayerProfile.query.all()
-
-
-    
+       
     return jsonify({"message": "new profile sucessfully created"}), 201
 
 # 3) Update Profile
@@ -61,25 +68,36 @@ def update_profile(user_id):
     data = request.json
 
     new_player_user = data.get("playerUser", profile.player_user)
-
-    # check if new username is valid
-    if not re.search(r"^[a-zA-Z0-9]{3,16}#[a-zA-Z0-9]{1,5}$", new_player_user):
-        raise Exception("ERROR: invalid player username (riot id)")
     
-    # check if new username already exists
-    existing_user = PlayerProfile.query.filter(
-        PlayerProfile.player_user == new_player_user,
-        PlayerProfile.id != user_id
-    ).first()
-    if existing_user:
-        return jsonify({"message": "ERROR: player with given username already exists"}), 409
+    try:
+        # check if new username is valid
+        if not re.search(r"^[a-zA-Z0-9]{3,16}#[a-zA-Z0-9]{1,5}$", new_player_user):
+            raise Exception("ERROR: invalid player username (riot id)")
+        
+        # check if new username already exists
+        existing_user = PlayerProfile.query.filter(
+            PlayerProfile.player_user == new_player_user,
+            PlayerProfile.id != user_id
+        ).first()
+        if existing_user:
+            return jsonify({"message": "ERROR: player with given username already exists"}), 409
 
-    # modify the given profile's fields if new info is provided for that field
-    profile.player_name = data.get("playerName", profile.player_name)   
-    profile.player_user = new_player_user
-    profile.player_rank = data.get("playerRank", profile.player_rank)
+        # check if new rank is valid
+        new_player_rank = data.get("playerRank", profile.player_rank)
 
-    db.session.commit()
+        if new_player_rank:
+            try:
+                profile.player_rank = RankEnum[new_player_rank].value
+            except KeyError:
+                raise Exception("ERROR: invalid player rank")
+
+        # modify the given profile's fields if new info is provided for that field
+        profile.player_name = data.get("playerName", profile.player_name)   
+        profile.player_user = new_player_user
+
+        db.session.commit()
+    except Exception as e:
+        return jsonify({"message": str(e)}), 400
 
     return jsonify({"message": "profile sucessfully updated"}), 200
 
@@ -95,12 +113,14 @@ def delete_profile(user_id):
     db.session.delete(profile)
     db.session.commit()
 
-    return jsonify({"message": "profile sucessfully deleted"}), 200
+    return jsonify({"message": "profile sucessfully deleted"}), 200 
+
 
 # ensures file only runs when explicitly ran (not when imported)
 if __name__ == "__main__":
 # creates all the models in the database
     with app.app_context():
+        db.drop_all()
         db.create_all()
 
     app.run(debug=True)
