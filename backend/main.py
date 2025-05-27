@@ -2,7 +2,8 @@
 
 from flask import request, jsonify
 from config import app, db
-from models import PlayerProfile
+from models import PlayerProfile, PlayerRankEnum
+import re
 
 
 # 1) Get Profiles
@@ -23,23 +24,34 @@ def create_profile():
     if not player_name or not player_user or not player_rank:
         return jsonify({"message": "ERROR: missing field"}), 400 # Status Message
     
-    new_profile = PlayerProfile(player_name = player_name, player_user = player_user, player_rank = player_rank)
     # try adding newly created Profile to Database, else return error message
     try:
-        # Start: Modified
-        profiles = PlayerProfile.query.all()
-        for p in profiles:
-            if (p.player_user == player_user):
-                raise Exception("ERROR: player with given username already exist")
-        # End: Modified
+        # Check if Username is valid
+        if not re.search(r"^[a-zA-Z0-9]{3,16}#[a-zA-Z0-9]{1,5}$", player_user):
+            raise Exception("ERROR: invalid player username (riot id)")
+        
+        # Check if Username already taken
+        existing_user = PlayerProfile.query.filter(
+            PlayerProfile.player_user == player_user,
+        ).first()
+        if existing_user:
+            return jsonify({"message": "ERROR: player with given username already exists"}), 409
+        
+        # convert rank string into enum format
+        try:
+            player_rank_enum = PlayerRankEnum.from_string(player_rank)
+        except Exception as e:
+            return jsonify({"message": str(e)}), 400
+
+        new_profile = PlayerProfile(
+            player_name = player_name, 
+            player_user = player_user, 
+            player_rank = player_rank_enum.value)
+        
         db.session.add(new_profile)
         db.session.commit()
     except Exception as e:
         return jsonify({"message": str(e)}), 400
-    
-    profiles = PlayerProfile.query.all()
-
-
     
     return jsonify({"message": "new profile sucessfully created"}), 201
 
@@ -57,6 +69,7 @@ def update_profile(user_id):
 
     new_player_user = data.get("playerUser", profile.player_user)
 
+    # check if updated username already exists
     existing_user = PlayerProfile.query.filter(
         PlayerProfile.player_user == new_player_user,
         PlayerProfile.id != user_id
@@ -67,7 +80,13 @@ def update_profile(user_id):
     # modify the given profile's fields if new info is provided for that field
     profile.player_name = data.get("playerName", profile.player_name)   
     profile.player_user = new_player_user
-    profile.player_rank = data.get("playerRank", profile.player_rank)
+
+    if "playerRank" in data:
+        try:
+            new_player_rank_enum = PlayerRankEnum.from_string(data["playerRank"])
+            profile.player_rank = new_player_rank_enum.value
+        except ValueError:
+            return jsonify({"message": "ERROR: invalid player rank"}), 400
 
     db.session.commit()
 
@@ -95,4 +114,5 @@ if __name__ == "__main__":
 
     app.run(debug=True)
 
+# Test Functions
 

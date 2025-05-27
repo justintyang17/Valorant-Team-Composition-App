@@ -16,7 +16,7 @@ const ProfileForm = ({existingProfile ={}, updateCallback}) => {
             playerUser,
             playerRank
         }
-        const url = "http://127.0.0.1:5000/" + (updating ? `update_profile/${existingProfile.id}` : "create_profile")
+        const url = "http://127.0.0.1:5173/" + (updating ? `update_profile/${existingProfile.id}` : "create_profile")
         const options = {
             method: (updating ? "PATCH" : "POST"),
             headers: {

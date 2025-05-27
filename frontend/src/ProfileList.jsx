@@ -6,7 +6,7 @@ const ProfileList = ({profiles, updateProfile, updateCallback}) => {
             const options = {
                 method: "DELETE"
             }
-            const response = await fetch(`http://127.0.0.1:5000/delete_profile/${id}`, options)
+            const response = await fetch(`http://127.0.0.1:5173/delete_profile/${id}`, options)
             if (response.status === 200) {
                 updateCallback()
             } else {

@@ -14,7 +14,7 @@ function App() {
     }, [])
 
     const fetchProfiles = async () => {
-        const response = await fetch("http://127.0.0.1:5000/profiles")
+        const response = await fetch("http://127.0.0.1:5173/profiles")
         const data = await response.json()
         setProfiles(data.profiles)
     }
