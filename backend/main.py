@@ -3,7 +3,7 @@
 from flask import request, jsonify
 from config import app, db
 from models import PlayerProfile
-
+import re
 
 # 1) Get Profiles
 @app.route("/profiles", methods=["GET"]) # Decorater: defines the endroute (/profiles) + valid methods for that endroute URL
@@ -26,12 +26,17 @@ def create_profile():
     new_profile = PlayerProfile(player_name = player_name, player_user = player_user, player_rank = player_rank)
     # try adding newly created Profile to Database, else return error message
     try:
-        # Start: Modified
+        # Check if username is valid
+        if not re.search(r"^[a-zA-Z0-9]{3,16}#[a-zA-Z0-9]{1,5}$", player_user):
+            raise Exception("ERROR: invalid player username (riot id)")
+        
+        # Check if username already exists
         profiles = PlayerProfile.query.all()
         for p in profiles:
             if (p.player_user == player_user):
                 raise Exception("ERROR: player with given username already exist")
-        # End: Modified
+            
+
         db.session.add(new_profile)
         db.session.commit()
     except Exception as e:
@@ -50,13 +55,18 @@ def update_profile(user_id):
 
     # return error message if profile not found
     if not profile:
-        return jsonify({"message": "ERROR: player not found"}), 401
-    
+        return jsonify({"message": "ERROR: player not found"}), 40
+
     # data = JSON data in database
     data = request.json
 
     new_player_user = data.get("playerUser", profile.player_user)
 
+    # check if new username is valid
+    if not re.search(r"^[a-zA-Z0-9]{3,16}#[a-zA-Z0-9]{1,5}$", new_player_user):
+        raise Exception("ERROR: invalid player username (riot id)")
+    
+    # check if new username already exists
     existing_user = PlayerProfile.query.filter(
         PlayerProfile.player_user == new_player_user,
         PlayerProfile.id != user_id

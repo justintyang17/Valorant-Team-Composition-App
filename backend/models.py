@@ -1,6 +1,5 @@
 # gets database from config.py
 from config import db
-
 class PlayerProfile(db.Model):
     # unique Database int ID
     id = db.Column(db.Integer, primary_key = True)
