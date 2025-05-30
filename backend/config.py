@@ -2,6 +2,8 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
+from sqlalchemy.orm import DeclarativeBase
+
 # SET UP
 
 #Initialize App
@@ -12,5 +14,6 @@ CORS(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///mydatabase.db"
 #No tracking database changes
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
 #Initialize Database instance
 db = SQLAlchemy(app)

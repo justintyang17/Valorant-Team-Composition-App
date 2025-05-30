@@ -67,6 +67,7 @@ const ProfileForm = ({existingProfile ={}, updateCallback}) => {
                 value={playerRank}
                 onChange={(e) => setPlayerRank(e.target.value)}
             >
+                <option value="">-- Select Rank --</option>
                 {ranks.map(rank => (
                     <option key={rank} value ={rank}>
                         {rank.replace('_', ' ')}

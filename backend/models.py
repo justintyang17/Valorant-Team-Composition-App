@@ -11,8 +11,10 @@ class RankEnum(Enum):
     BRONZE_2 = 5
     BRONZE_3 = 6
 
+
 class PlayerProfile(db.Model):
     # unique Database int ID
+    ___tablename___ = "player_profiles"
     id = db.Column(db.Integer, primary_key = True)
     player_name = db.Column(db.String(100), unique = False, nullable = False)
     player_user = db.Column(db.String(100), unique = True, nullable = False)
