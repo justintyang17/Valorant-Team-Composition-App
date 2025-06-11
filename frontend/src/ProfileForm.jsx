@@ -32,7 +32,7 @@ const ProfileForm = ({existingProfile ={}, updateCallback}) => {
         const data = {
             playerName,
             playerUser,
-            playerRank
+            playerRank,
         }
 
         // Creates url variable based on whether user is creating or updating profile

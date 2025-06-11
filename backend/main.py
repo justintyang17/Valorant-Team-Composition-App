@@ -134,7 +134,7 @@ def delete_profile(user_id):
     if not profile:
         return jsonify({"message": "ERROR: player not found"}), 401
     
-    deleteAgentPool(profile)
+    #deleteAgentPool(profile)
     db.session.delete(profile)
     db.session.commit()
 

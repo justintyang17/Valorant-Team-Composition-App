@@ -11,24 +11,6 @@ class RankEnum(Enum):
     BRONZE_2 = 5
     BRONZE_3 = 6
 
-class PlayerProfile(db.Model):
-    # unique Database int ID
-    __tablename__ = "player_profiles"
-    id = db.Column(db.Integer, primary_key = True)
-    player_name = db.Column(db.String(100), unique = False, nullable = False)
-    player_user = db.Column(db.String(100), unique = True, nullable = False)
-    player_rank = db.Column(db.Integer, nullable = False)
-    # player_agentpool = db.Column(...)
-
-    # converts data into a dictionary 
-    def to_json(self):
-        return {
-            "id": self.id,
-            "playerName": self.player_name,
-            "playerUser": self.player_user,
-            "playerRank": RankEnum(self.player_rank).name,
-        }
-
 class RoleEnum(Enum):
     DUELIST = "Duelist"
     INITIATOR = "Initiator"
@@ -89,21 +71,6 @@ class MapEnum(Enum):
     ABYSS = "Abyss"
     '''
 
-# Table storing player-map pool for all players
-class PlayerMapTable(db.Model):
-    __tablename__ = "player_mappool_db"
-    pmp_id = db.Column(db.Integer, primary_key = True)
-    player_id = db.Column(db.String, db.ForeignKey("player_profiles.id"))
-    map = db.Column(db.Enum(MapEnum), nullable = False)
-
-    # converts data into a dictionary 
-    def to_json(self):
-        return {
-            "pmpID": self.pmp_id,
-            "playerID": self.player_id,
-            "map": self.map.name,
-        }
-    
 # Table storing map-agent pool for all players
 class MapAgentTable(db.Model):
     __tablename__ = "map_agentpool_db"
@@ -120,4 +87,42 @@ class MapAgentTable(db.Model):
             "agentID": self.agent_id,
             "proficiency": self.proficiency,
         }
+
+# Table storing player-map pool for all players
+class PlayerMapTable(db.Model):
+    __tablename__ = "player_mappool_db"
+    pmp_id = db.Column(db.Integer, primary_key = True)
+    player_id = db.Column(db.String, db.ForeignKey("player_profiles.id"))
+    map = db.Column(db.Enum(MapEnum), nullable = False)
+    agent_pool = db.relationship(MapAgentTable, backref = "map_pool", cascade ="all, delete-orphan")
+
+    # converts data into a dictionary 
+    def to_json(self):
+        return {
+            "pmpID": self.pmp_id,
+            "playerID": self.player_id,
+            "map": self.map.name,
+            "agentPool": [a.to_json() for a in self.agent_pool],
+        }
+    
+
+class PlayerProfile(db.Model):
+    # unique Database int ID
+    __tablename__ = "player_profiles"
+    id = db.Column(db.Integer, primary_key = True)
+    player_name = db.Column(db.String(100), unique = False, nullable = False)
+    player_user = db.Column(db.String(100), unique = True, nullable = False)
+    player_rank = db.Column(db.Integer, nullable = False)
+    map_pool = db.relationship(PlayerMapTable, backref = "player", cascade ="all, delete-orphan")
+
+    # converts data into a dictionary 
+    def to_json(self):
+        return {
+            "id": self.id,
+            "playerName": self.player_name,
+            "playerUser": self.player_user,
+            "playerRank": RankEnum(self.player_rank).name,
+            "mapPool": [m.to_json() for m in self.map_pool],
+        }
+
     
