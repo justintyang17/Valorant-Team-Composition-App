@@ -2,8 +2,9 @@
 
 from flask import request, jsonify
 from config import app, db
-from models import PlayerProfile, RankEnum
+from models import RankEnum, PlayerProfile, RoleEnum, TraitEnum, AgentTable, AgentTraitTable, MapEnum, PlayerMapTable, MapAgentTable
 import re
+from initialization import *
 
 # 1) Get Profiles
 @app.route("/profiles", methods=["GET"]) # Decorater: defines the endroute (/profiles) + valid methods for that endroute URL
@@ -13,6 +14,15 @@ def get_profiles():
     # convert each python object in profiles into JSON objects
     json_profiles = list(map(lambda x: x.to_json(), profiles))
     return jsonify({"profiles": json_profiles})
+
+# 1.5) Get Agents
+@app.route("/agents", methods=["GET"]) # Decorater: defines the endroute (/profiles) + valid methods for that endroute URL
+def get_agents():
+    # uses Flask SQLAlchemy to retrieve all agents from database
+    agents = AgentTable.query.all()
+    # convert each python object in profiles into JSON objects
+    json_agents = list(map(lambda x: x.to_json(), agents))
+    return jsonify({"agents": json_agents})
 
 # 2) Create Profile
 @app.route("/create_profile", methods=["POST"])
@@ -49,11 +59,34 @@ def create_profile():
         )
 
         db.session.add(new_profile)
+        db.session.flush()
+        createAgentPool(new_profile)
         db.session.commit()
+
     except Exception as e:
         return jsonify({"message": str(e)}), 400
        
     return jsonify({"message": "new profile sucessfully created"}), 201
+
+# Helper: Creates entries in PlayerMap and MapAgent Tables for new Profile
+def createAgentPool(new_profile):
+    user_id = new_profile.id
+    agents = AgentTable.query.all()
+    for m in MapEnum:
+        new_pmp_entry = PlayerMapTable(
+            player_id = user_id,
+            map = m
+        )
+        db.session.add(new_pmp_entry)
+        db.session.flush()
+        for a in agents:
+            new_map_entry = MapAgentTable(
+                pmp_id = new_pmp_entry.pmp_id,
+                agent_id = a.agent_id,
+                # (!!!) Need to add User Input Implementation
+                proficiency = 0
+            )
+            db.session.add(new_map_entry) 
 
 # 3) Update Profile
 @app.route("/update_profile/<int:user_id>", methods=["PATCH"])
@@ -62,7 +95,7 @@ def update_profile(user_id):
 
     # return error message if profile not found
     if not profile:
-        return jsonify({"message": "ERROR: player not found"}), 40
+        return jsonify({"message": "ERROR: player not found"}), 404
 
     # data = JSON data in database
     data = request.json
@@ -110,19 +143,29 @@ def delete_profile(user_id):
     if not profile:
         return jsonify({"message": "ERROR: player not found"}), 401
     
+    #deleteAgentPool(profile)
     db.session.delete(profile)
     db.session.commit()
 
     return jsonify({"message": "profile sucessfully deleted"}), 200 
+
+# Helper: Removes entries in PlayerMap and MapAgent Tables of given Profile
+def deleteAgentPool(profile):
+    pmp_list = PlayerMapTable.query.filter_by(player_id = profile.id).all()
+    for pmp in pmp_list:
+        map_list = MapAgentTable.query.filter_by(pmp_id = pmp.pmp_id).all()
+        for map in map_list:
+            db.session.delete(map)
+        db.session.delete(pmp)
+    
 
 
 # ensures file only runs when explicitly ran (not when imported)
 if __name__ == "__main__":
 # creates all the models in the database
     with app.app_context():
-        db.drop_all()
         db.create_all()
-
+        initializeAssets()
     app.run(debug=True)
 
 

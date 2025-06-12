@@ -12,5 +12,6 @@ CORS(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///mydatabase.db"
 #No tracking database changes
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
 #Initialize Database instance
 db = SQLAlchemy(app)
