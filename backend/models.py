@@ -113,7 +113,7 @@ class PlayerProfile(db.Model):
     player_name = db.Column(db.String(100), unique = False, nullable = False)
     player_user = db.Column(db.String(100), unique = True, nullable = False)
     player_rank = db.Column(db.Integer, nullable = False)
-    map_pool = db.relationship(PlayerMapTable, backref = "player", cascade ="all, delete-orphan")
+    player_map_pool = db.relationship(PlayerMapTable, backref = "player", cascade ="all, delete-orphan")
 
     # converts data into a dictionary 
     def to_json(self):
@@ -122,7 +122,7 @@ class PlayerProfile(db.Model):
             "playerName": self.player_name,
             "playerUser": self.player_user,
             "playerRank": RankEnum(self.player_rank).name,
-            "mapPool": [m.to_json() for m in self.map_pool],
+            "playerMapPool": [m.to_json() for m in self.player_map_pool],
         }
 
     
