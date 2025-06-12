@@ -94,7 +94,7 @@ class PlayerMapTable(db.Model):
     pmp_id = db.Column(db.Integer, primary_key = True)
     player_id = db.Column(db.String, db.ForeignKey("player_profiles.id"))
     map = db.Column(db.Enum(MapEnum), nullable = False)
-    agent_pool = db.relationship(MapAgentTable, backref = "map_pool", cascade ="all, delete-orphan")
+    agent_pool = db.relationship("MapAgentTable", backref = "map_pool", cascade ="all, delete-orphan")
 
     # converts data into a dictionary 
     def to_json(self):
@@ -113,7 +113,7 @@ class PlayerProfile(db.Model):
     player_name = db.Column(db.String(100), unique = False, nullable = False)
     player_user = db.Column(db.String(100), unique = True, nullable = False)
     player_rank = db.Column(db.Integer, nullable = False)
-    player_map_pool = db.relationship(PlayerMapTable, backref = "player", cascade ="all, delete-orphan")
+    player_map_pool = db.relationship("PlayerMapTable", backref = "player", cascade ="all, delete-orphan")
 
     # converts data into a dictionary 
     def to_json(self):

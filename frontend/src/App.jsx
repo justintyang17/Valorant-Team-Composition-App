@@ -14,9 +14,12 @@ function App() {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [currentProfile, setCurrentProfile] = useState([])
 
+    const [agents, setAgents] = useState([])
+
     // fetchProfiles ran ONCE when component (aka page) is opened or when explicitly called
     useEffect(() => {
         fetchProfiles()
+        fetchAgents()
     }, [])
 
     // 
@@ -25,6 +28,13 @@ function App() {
         const data = await response.json()
         setProfiles(data.profiles)
     }
+
+    const fetchAgents = async () => {
+        const response = await fetch("http://127.0.0.1:5000/agents")
+        const data = await response.json()
+        setAgents(data.agents)
+    }
+
 
     // sets isModalOpen = False and clears currentProfile
     const closeModal = () => {
@@ -67,7 +77,7 @@ function App() {
                 {/* BUTTON: Calls closeModal when pressed */}
                 <span className="close" onClick={closeModal}>&times;</span>
                 {/* Displays the ProfileForm */}
-                <ProfileForm existingProfile={currentProfile} updateCallback={onUpdate}/>
+                <ProfileForm existingProfile={currentProfile} updateCallback={onUpdate} agents={agents}/>
                 </div>
             </div>
             }

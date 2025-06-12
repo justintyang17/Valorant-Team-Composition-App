@@ -1,12 +1,18 @@
 import React from "react"
 import AgentProficiency from './AgentProficiency'
 
-const AgentPool = ({mapAgentPool=[]}) => {
+const AgentPool = ({mapAgentPool=[], agentList  = []}) => {
+
+    const getAgentName = (ID) => {
+        const agent = agentList.find(a => a.agentID == ID)
+        return agent.agentName
+    }
+
     return (
         <ul>
             {mapAgentPool.map((agent, i) => (
                 <div key={i}>
-                    <AgentProficiency agentID={agent.agentID} proficiency={agent.proficiency}/>
+                    <AgentProficiency agentObj={agent} proficiency={agent.proficiency} agentName={getAgentName(agent.agentID)}/>
                 </div>
                 
             ))}

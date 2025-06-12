@@ -1,16 +1,12 @@
 import React from "react"
 import { useState } from "react"
 
-const AgentProficiency = ({agentID, proficiency}) => {
+const AgentProficiency = ({agentObj, proficiency, agentName}) => {
     const [proficiencyVal, setProficiencyVal] = useState(proficiency)
-
-    const getAgentName = (ID) => {
-        return ID
-    }
 
     return (
         <div>
-            <label>Agent ID: {getAgentName(agentID)}</label>
+            <label>{agentName}</label>
             <input
                 id="proficiency"
                 value={proficiencyVal}

@@ -15,6 +15,15 @@ def get_profiles():
     json_profiles = list(map(lambda x: x.to_json(), profiles))
     return jsonify({"profiles": json_profiles})
 
+# 1.5) Get Agents
+@app.route("/agents", methods=["GET"]) # Decorater: defines the endroute (/profiles) + valid methods for that endroute URL
+def get_agents():
+    # uses Flask SQLAlchemy to retrieve all agents from database
+    agents = AgentTable.query.all()
+    # convert each python object in profiles into JSON objects
+    json_agents = list(map(lambda x: x.to_json(), agents))
+    return jsonify({"agents": json_agents})
+
 # 2) Create Profile
 @app.route("/create_profile", methods=["POST"])
 def create_profile():
