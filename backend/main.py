@@ -83,7 +83,6 @@ def createAgentPool(new_profile):
             new_map_entry = MapAgentTable(
                 pmp_id = new_pmp_entry.pmp_id,
                 agent_id = a.agent_id,
-                # (!!!) Need to add User Input Implementation
                 proficiency = 0
             )
             db.session.add(new_map_entry) 
@@ -125,8 +124,10 @@ def update_profile(user_id):
                 raise Exception("ERROR: invalid player rank")
 
         # modify the given profile's fields if new info is provided for that field
-        profile.player_name = data.get("playerName", profile.player_name)   
+        profile.player_name = data.get("playerName", profile.player_name) 
+        profile.player_map_pool = data.get("playerMapPool", profile.player_map_pool)     
         profile.player_user = new_player_user
+
 
         db.session.commit()
     except Exception as e:

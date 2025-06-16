@@ -2,7 +2,7 @@ import { useState } from "react"
 
 import MapPool from './Temporary_Components/MapPool'
 
-const ProfileForm = ({existingProfile ={}, updateCallback, agents = []}) => {
+const ProfileForm = ({existingProfile ={}, updateCallback}) => {
     // "Global Variables"
     // 1) playerName = curr profile's name
     // 2) playerUser = curr profile's username
@@ -95,7 +95,7 @@ const ProfileForm = ({existingProfile ={}, updateCallback, agents = []}) => {
                 ))}
             </select>
         </div>
-        {updating && <MapPool existingProfileMapPool={existingProfile.playerMapPool} agentList = {agents}/>}
+        {updating && <MapPool existingProfileMapPool={existingProfile.playerMapPool}/>}
         {/* BUTTON: Runs onSubmit when pressed */}
         <button type="submit">{updating ? "Update Profile" : "Add Profile"}</button>
     </form>

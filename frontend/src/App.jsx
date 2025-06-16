@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import ProfileList from './ProfileList'
 import ProfileForm from './ProfileForm'
 import './App.css'
+import { AgentListContext } from './Temporary_Components/AgentListContext'
 
 // App component
 function App() {
@@ -77,7 +78,9 @@ function App() {
                 {/* BUTTON: Calls closeModal when pressed */}
                 <span className="close" onClick={closeModal}>&times;</span>
                 {/* Displays the ProfileForm */}
-                <ProfileForm existingProfile={currentProfile} updateCallback={onUpdate} agents={agents}/>
+                <AgentListContext.Provider value = {agents}>
+                    <ProfileForm existingProfile={currentProfile} updateCallback={onUpdate}/>
+                </AgentListContext.Provider>      
                 </div>
             </div>
             }
