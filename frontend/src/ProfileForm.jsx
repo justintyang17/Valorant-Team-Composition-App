@@ -1,16 +1,19 @@
 import { useState } from "react"
 
 import MapPool from './Temporary_Components/MapPool'
+import { ProficiencyUpdateContext } from "./Temporary_Components/ProficiencyUpdateContext";
 
 const ProfileForm = ({existingProfile ={}, updateCallback}) => {
     // "Global Variables"
     // 1) playerName = curr profile's name
     // 2) playerUser = curr profile's username
     // 3) playerRank = curr profile's rank
+    // 4) playerMapPool = curr profile's map pool
 
     const [playerName, setPlayerName] = useState(existingProfile.playerName || "")
     const [playerUser, setPlayerUser] = useState(existingProfile.playerUser || "")
     const [playerRank, setPlayerRank] = useState(existingProfile.playerRank || "")
+    const [playerMapPool, setPlayerMapPool] = useState(existingProfile.playerMapPool || [])
 
     // For Rank Selection
     const ranks = [
@@ -35,6 +38,7 @@ const ProfileForm = ({existingProfile ={}, updateCallback}) => {
             playerName,
             playerUser,
             playerRank,
+            playerMapPool
         }
 
         // Creates url variable based on whether user is creating or updating profile
@@ -58,6 +62,29 @@ const ProfileForm = ({existingProfile ={}, updateCallback}) => {
             // If successful, run onUpdate from App.jsx
             updateCallback()
         }
+    }
+
+    const updateAgentProficiency = (map, agentID, prof_value) => {
+        const newMapPool = playerMapPool.map(mapPoolEntry => {
+            // Ignore all other maps
+            if (mapPoolEntry.map !== map) return mapPoolEntry
+            
+            const newAgentPool = mapPoolEntry.agentPool.map(agentPoolEntry => {
+                // Ignore all other agent entries
+                if (agentPoolEntry.agentID !== agentID) return agentPoolEntry
+                // Return agentpool with updated entry
+                return {
+                    ...agentPoolEntry,
+                    proficiency: prof_value
+                }
+            })
+            // Return map pool with updated entry
+            return {
+                ...mapPoolEntry,
+                agentPool: newAgentPool
+            }
+        })
+        setPlayerMapPool(newMapPool)
     }
 
     // value => the default value that appears in the text box
@@ -95,7 +122,9 @@ const ProfileForm = ({existingProfile ={}, updateCallback}) => {
                 ))}
             </select>
         </div>
-        {updating && <MapPool existingProfileMapPool={existingProfile.playerMapPool}/>}
+        <ProficiencyUpdateContext.Provider value = {updateAgentProficiency}>
+            {updating && <MapPool existingProfileMapPool={existingProfile.playerMapPool}/>}
+        </ProficiencyUpdateContext.Provider>
         {/* BUTTON: Runs onSubmit when pressed */}
         <button type="submit">{updating ? "Update Profile" : "Add Profile"}</button>
     </form>

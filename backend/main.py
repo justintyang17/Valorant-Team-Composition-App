@@ -125,7 +125,28 @@ def update_profile(user_id):
 
         # modify the given profile's fields if new info is provided for that field
         profile.player_name = data.get("playerName", profile.player_name) 
-        profile.player_map_pool = data.get("playerMapPool", profile.player_map_pool)     
+
+
+        # clear current map pool data
+        profile.player_map_pool.clear()
+
+        # loop through each player_map entry
+        for map_pool_data in data.get("playerMapPool", []):
+            new_map_obj = PlayerMapTable(
+                map=MapEnum[map_pool_data["map"]],
+                player=profile
+            )
+            # loop through each map_agent entry
+            for agent_data in map_pool_data.get("agentPool", []):
+                new_agent = MapAgentTable(
+                    agent_id=agent_data["agentID"],
+                    proficiency=agent_data["proficiency"]
+                )
+                # add map_agent entry to player_map entry
+                new_map_obj.agent_pool.append(new_agent)
+            # add player_map entry to profile object
+            profile.player_map_pool.append(new_map_obj)
+        
         profile.player_user = new_player_user
 
 

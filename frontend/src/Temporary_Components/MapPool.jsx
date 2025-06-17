@@ -7,7 +7,7 @@ const MapPool = ({existingProfileMapPool=[]}) => {
              {existingProfileMapPool.map((mapObj, i) => (
                 <div key={i}>
                     <h3>Agent Pool for {mapObj.map}</h3>
-                    <AgentPool mapAgentPool={mapObj.agentPool}/>
+                    <AgentPool mapAgentPool={mapObj.agentPool} map = {mapObj.map}/>
                 </div>
             ))}
         </div>
