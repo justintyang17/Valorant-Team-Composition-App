@@ -23,13 +23,14 @@ function App() {
         fetchAgents()
     }, [])
 
-    // 
+    // retrive player profiles from database
     const fetchProfiles = async () => {
         const response = await fetch("http://127.0.0.1:5000/profiles")
         const data = await response.json()
         setProfiles(data.profiles)
     }
 
+    // retrive agents from database
     const fetchAgents = async () => {
         const response = await fetch("http://127.0.0.1:5000/agents")
         const data = await response.json()
@@ -70,17 +71,22 @@ function App() {
         <>
         {/* Displays the ProfileList */}
         <ProfileList profiles={profiles} updateProfile = {openEditModal} updateCallback={onUpdate}/>
+
         {/* BUTTON: Calls openCreateModal when pressed */}
         <button onClick={openCreateModal}>Create New Profile</button>
+
         {/* If creating/updating a profile, display the modal (aka pop-up) */}
         {isModalOpen && <div className="modal">
             <div className="modal-content">
+
                 {/* BUTTON: Calls closeModal when pressed */}
                 <span className="close" onClick={closeModal}>&times;</span>
+
                 {/* Displays the ProfileForm */}
                 <AgentListContext.Provider value = {agents}>
                     <ProfileForm existingProfile={currentProfile} updateCallback={onUpdate}/>
                 </AgentListContext.Provider>      
+                
                 </div>
             </div>
             }

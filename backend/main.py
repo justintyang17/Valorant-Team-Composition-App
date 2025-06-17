@@ -114,6 +114,8 @@ def update_profile(user_id):
         if existing_user:
             return jsonify({"message": "ERROR: player with given username already exists"}), 409
 
+        profile.player_user = new_player_user
+
         # check if new rank is valid
         new_player_rank = data.get("playerRank", profile.player_rank)
 
@@ -123,34 +125,35 @@ def update_profile(user_id):
             except KeyError:
                 raise Exception("ERROR: invalid player rank")
 
-        # modify the given profile's fields if new info is provided for that field
+        # modify the given profile name if new info is provided
         profile.player_name = data.get("playerName", profile.player_name) 
 
+        # map_pool_data = inputted map_pool from frontend
+        map_pool_data = data.get("playerMapPool", [])
 
-        # clear current map pool data
-        profile.player_map_pool.clear()
+        # loop through each player_map entry in inputted data
+        for player_map_entry in map_pool_data:
+            map_name = player_map_entry["map"]
 
-        # loop through each player_map entry
-        for map_pool_data in data.get("playerMapPool", []):
-            new_map_obj = PlayerMapTable(
-                map=MapEnum[map_pool_data["map"]],
-                player=profile
-            )
-            # loop through each map_agent entry
-            for agent_data in map_pool_data.get("agentPool", []):
-                new_agent = MapAgentTable(
-                    agent_id=agent_data["agentID"],
-                    proficiency=agent_data["proficiency"]
-                )
-                # add map_agent entry to player_map entry
-                new_map_obj.agent_pool.append(new_agent)
-            # add player_map entry to profile object
-            profile.player_map_pool.append(new_map_obj)
-        
-        profile.player_user = new_player_user
+            # get the associated player_map object from the database 
+            for m in profile.player_map_pool:
+                if m.map.name == map_name:
+                    map_obj = m
 
+            # loop through each map_agent entry in inputted data
+            for map_agent_entry in player_map_entry["agentPool"]:
+                agent_id = map_agent_entry["agentID"]
+                new_prof = map_agent_entry["proficiency"]
+
+                # get the associated map_agent object from the database 
+                for a in map_obj.agent_pool:
+                    if a.agent_id == agent_id:
+                        agent_obj = a
+                # change the proficiency value from database to inputted value
+                agent_obj.proficiency = new_prof
 
         db.session.commit()
+        
     except Exception as e:
         return jsonify({"message": str(e)}), 400
 

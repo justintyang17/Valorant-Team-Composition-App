@@ -3,12 +3,12 @@ import { useState } from "react"
 import MapPool from './Temporary_Components/MapPool'
 import { ProficiencyUpdateContext } from "./Temporary_Components/ProficiencyUpdateContext";
 
-const ProfileForm = ({existingProfile ={}, updateCallback}) => {
+const ProfileForm = ({ existingProfile = {}, updateCallback }) => {
     // "Global Variables"
-    // 1) playerName = curr profile's name
-    // 2) playerUser = curr profile's username
-    // 3) playerRank = curr profile's rank
-    // 4) playerMapPool = curr profile's map pool
+    // 1) playerName = current profile's name
+    // 2) playerUser = current profile's username
+    // 3) playerRank = current profile's rank
+    // 4) playerMapPool = current profile's map pool
 
     const [playerName, setPlayerName] = useState(existingProfile.playerName || "")
     const [playerUser, setPlayerUser] = useState(existingProfile.playerUser || "")
@@ -23,17 +23,16 @@ const ProfileForm = ({existingProfile ={}, updateCallback}) => {
         "BRONZE_1",
         "BRONZE_2",
         "BRONZE_3"
-      ];
+    ];
 
     // Variable used to determine whether or not modal is being used to create new profile or update existing profile;
     // if curr profile exists (aka a profile from the list was selected) then updating = true
     const updating = Object.entries(existingProfile).length !== 0
 
-
     const onSubmit = async (e) => {
         e.preventDefault()
 
-        // Creates local variable with inputted information
+        // Creates local variable with state variables
         const data = {
             playerName,
             playerUser,
@@ -64,24 +63,33 @@ const ProfileForm = ({existingProfile ={}, updateCallback}) => {
         }
     }
 
+    // Called whenever agent proficiency is altered to update state variable
     const updateAgentProficiency = (map, agentID, prof_value) => {
+        // Create a new mappool object
         const newMapPool = playerMapPool.map(mapPoolEntry => {
-            // Ignore all other maps
-            if (mapPoolEntry.map !== map) return mapPoolEntry
-            
-            const newAgentPool = mapPoolEntry.agentPool.map(agentPoolEntry => {
-                // Ignore all other agent entries
-                if (agentPoolEntry.agentID !== agentID) return agentPoolEntry
-                // Return agentpool with updated entry
+            // Keeps all mappool entries the same besides given one 
+            if (mapPoolEntry.map !== map) {
+                return mapPoolEntry
+            } else {
+                // Create a new agentpool object
+                const newAgentPool = mapPoolEntry.agentPool.map(agentPoolEntry => {
+                    // Keeps all agentpool entries the same besides given one 
+                    if (agentPoolEntry.agentID !== agentID) {
+                        return agentPoolEntry
+
+                    } else {
+                        // Return agentpool with updated proficiency
+                        return {
+                            ...agentPoolEntry,
+                            proficiency: prof_value
+                        }
+                    }
+                })
+                // Return map pool entry with updated agent pool
                 return {
-                    ...agentPoolEntry,
-                    proficiency: prof_value
+                    ...mapPoolEntry,
+                    agentPool: newAgentPool
                 }
-            })
-            // Return map pool with updated entry
-            return {
-                ...mapPoolEntry,
-                agentPool: newAgentPool
             }
         })
         setPlayerMapPool(newMapPool)
@@ -90,44 +98,46 @@ const ProfileForm = ({existingProfile ={}, updateCallback}) => {
     // value => the default value that appears in the text box
     // onChange => if the value of text box changes, set the corresponding global variable to that value
     return (
-    <form onSubmit = {onSubmit}>
-        <div>
-            <label htmlFor="playerName">Player's Name</label>
-            <input
-                type="text"
-                id="playerName"
-                value={playerName}
-                onChange={(e) => setPlayerName(e.target.value)}/>
-        </div>
-        <div>
-            <label htmlFor="playerUser">Player's Username</label>
-            <input
-                type="text"
-                id="playerUser"
-                value={playerUser}
-                onChange={(e) => setPlayerUser(e.target.value)}/>
-        </div>
-        <div>
-            <label htmlFor="playerRank">Player's Rank</label>
-            <select
-                id="playerRank"
-                value={playerRank}
-                onChange={(e) => setPlayerRank(e.target.value)}
-            >
-                <option value="">-- Select Rank --</option>
-                {ranks.map(rank => (
-                    <option key={rank} value ={rank}>
-                        {rank.replace('_', ' ')}
-                    </option>
-                ))}
-            </select>
-        </div>
-        <ProficiencyUpdateContext.Provider value = {updateAgentProficiency}>
-            {updating && <MapPool existingProfileMapPool={existingProfile.playerMapPool}/>}
-        </ProficiencyUpdateContext.Provider>
-        {/* BUTTON: Runs onSubmit when pressed */}
-        <button type="submit">{updating ? "Update Profile" : "Add Profile"}</button>
-    </form>
+        <form onSubmit={onSubmit}>
+            <div>
+                <label htmlFor="playerName">Player's Name</label>
+                <input
+                    type="text"
+                    id="playerName"
+                    value={playerName}
+                    onChange={(e) => setPlayerName(e.target.value)} />
+            </div>
+            <div>
+                <label htmlFor="playerUser">Player's Username</label>
+                <input
+                    type="text"
+                    id="playerUser"
+                    value={playerUser}
+                    onChange={(e) => setPlayerUser(e.target.value)} />
+            </div>
+            <div>
+                <label htmlFor="playerRank">Player's Rank</label>
+                <select
+                    id="playerRank"
+                    value={playerRank}
+                    onChange={(e) => setPlayerRank(e.target.value)}
+                >
+                    <option value="">-- Select Rank --</option>
+                    {ranks.map(rank => (
+                        <option key={rank} value={rank}>
+                            {rank.replace('_', ' ')}
+                        </option>
+                    ))}
+                </select>
+            </div>
+
+            <ProficiencyUpdateContext.Provider value={updateAgentProficiency}>
+                {updating && <MapPool existingProfileMapPool={existingProfile.playerMapPool} />}
+            </ProficiencyUpdateContext.Provider>
+            
+            {/* BUTTON: Runs onSubmit when pressed */}
+            <button type="submit">{updating ? "Update Profile" : "Add Profile"}</button>
+        </form>
     );
 };
 

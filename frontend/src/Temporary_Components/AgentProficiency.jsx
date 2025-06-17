@@ -8,6 +8,7 @@ const AgentProficiency = ({agentObj, proficiency, agentName, map}) => {
 
     const updateAgentProficiency = useContext(ProficiencyUpdateContext)
 
+    // function to set new state variable and update player's mappool
     const setAndUpdate = (prof_val) => {
         setProficiencyVal(prof_val)
         updateAgentProficiency(map, agentObj.agentID, prof_val)
