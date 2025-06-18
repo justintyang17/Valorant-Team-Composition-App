@@ -6,7 +6,7 @@ from models import RankEnum, PlayerProfile, RoleEnum, TraitEnum, AgentTable, Age
 import re
 from initialization import *
 
-# 1) Get Profiles
+# 1.1) Get Profiles
 @app.route("/profiles", methods=["GET"]) # Decorater: defines the endroute (/profiles) + valid methods for that endroute URL
 def get_profiles():
     # uses Flask SQLAlchemy to retrieve all profiles from database
@@ -15,7 +15,7 @@ def get_profiles():
     json_profiles = list(map(lambda x: x.to_json(), profiles))
     return jsonify({"profiles": json_profiles})
 
-# 1.5) Get Agents
+# 1.2) Get Agents
 @app.route("/agents", methods=["GET"]) # Decorater: defines the endroute (/profiles) + valid methods for that endroute URL
 def get_agents():
     # uses Flask SQLAlchemy to retrieve all agents from database
@@ -24,12 +24,39 @@ def get_agents():
     json_agents = list(map(lambda x: x.to_json(), agents))
     return jsonify({"agents": json_agents})
 
+# 1.3) Get Map Pool Template for Profile Creation
+@app.route("/template", methods=["GET"]) # Decorater: defines the endroute (/profiles) + valid methods for that endroute URL
+def get_template():
+    # uses Flask SQLAlchemy to retrieve all agents from database
+    agents = AgentTable.query.all()
+    # get list of agentIDs from agents
+    agent_data = [agent.agent_id for agent in agents]
+
+    # create template of JSON object from scratch
+    template = []
+    for m in MapEnum:
+        template.append({
+            "map": m.name,
+            "agentPool": [
+                {
+                    "agentID": a,
+                    "proficiency": 0
+                } 
+                for a in agent_data
+            ]
+        })
+
+    return jsonify({"template": template})
+
+
 # 2) Create Profile
 @app.route("/create_profile", methods=["POST"])
 def create_profile():
     player_name = request.json.get("playerName")
     player_user = request.json.get("playerUser")
     player_rank_string = request.json.get("playerRank")
+
+    player_map_pool = request.json.get("playerMapPool")
 
     if not player_name or not player_user or not player_rank_string:
         return jsonify({"message": "ERROR: missing field"}), 400 # Status Message
@@ -55,12 +82,14 @@ def create_profile():
         new_profile = PlayerProfile(
         player_name=player_name,
         player_user=player_user,
-        player_rank=player_rank
+        player_rank=player_rank,
+        # don't include player_map_pool, it is a relationship (not an actually column in db)
+        # already handled by createAgentPool()
         )
 
         db.session.add(new_profile)
         db.session.flush()
-        createAgentPool(new_profile)
+        createAgentPool(new_profile, player_map_pool)
         db.session.commit()
 
     except Exception as e:
@@ -69,21 +98,21 @@ def create_profile():
     return jsonify({"message": "new profile sucessfully created"}), 201
 
 # Helper: Creates entries in PlayerMap and MapAgent Tables for new Profile
-def createAgentPool(new_profile):
+def createAgentPool(new_profile, player_map_pool):
     user_id = new_profile.id
-    agents = AgentTable.query.all()
-    for m in MapEnum:
+    for player_map_entry in player_map_pool:
+        m = MapEnum[player_map_entry["map"]]
         new_pmp_entry = PlayerMapTable(
             player_id = user_id,
             map = m
         )
         db.session.add(new_pmp_entry)
         db.session.flush()
-        for a in agents:
+        for map_agent_entry in player_map_entry["agentPool"]:
             new_map_entry = MapAgentTable(
                 pmp_id = new_pmp_entry.pmp_id,
-                agent_id = a.agent_id,
-                proficiency = 0
+                agent_id = map_agent_entry["agentID"],
+                proficiency = map_agent_entry["proficiency"]
             )
             db.session.add(new_map_entry) 
 
@@ -175,6 +204,7 @@ def delete_profile(user_id):
     return jsonify({"message": "profile sucessfully deleted"}), 200 
 
 # Helper: Removes entries in PlayerMap and MapAgent Tables of given Profile
+# NOT NEEDED ANYMORE due to cascading in models.py
 def deleteAgentPool(profile):
     pmp_list = PlayerMapTable.query.filter_by(player_id = profile.id).all()
     for pmp in pmp_list:

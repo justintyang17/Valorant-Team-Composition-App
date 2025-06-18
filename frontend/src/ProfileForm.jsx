@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 import MapPool from './Temporary_Components/MapPool'
 import { ProficiencyUpdateContext } from "./Temporary_Components/ProficiencyUpdateContext";
@@ -28,6 +28,19 @@ const ProfileForm = ({ existingProfile = {}, updateCallback }) => {
     // Variable used to determine whether or not modal is being used to create new profile or update existing profile;
     // if curr profile exists (aka a profile from the list was selected) then updating = true
     const updating = Object.entries(existingProfile).length !== 0
+
+    // runFetchTemplate if currently creating a profile
+    useEffect(() => {
+        fetchTemplate()
+    }, [])
+
+    const fetchTemplate = async () => {
+        if (!updating) {
+            const response = await fetch("http://127.0.0.1:5000/template")
+            const data = await response.json()
+            setPlayerMapPool(data.template)
+        }
+    }
 
     const onSubmit = async (e) => {
         e.preventDefault()
@@ -132,9 +145,9 @@ const ProfileForm = ({ existingProfile = {}, updateCallback }) => {
             </div>
 
             <ProficiencyUpdateContext.Provider value={updateAgentProficiency}>
-                {updating && <MapPool existingProfileMapPool={existingProfile.playerMapPool} />}
+                {<MapPool existingProfileMapPool={playerMapPool} />}
             </ProficiencyUpdateContext.Provider>
-            
+
             {/* BUTTON: Runs onSubmit when pressed */}
             <button type="submit">{updating ? "Update Profile" : "Add Profile"}</button>
         </form>
