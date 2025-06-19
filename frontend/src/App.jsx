@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import ProfileList from './ProfileList'
 import ProfileForm from './ProfileForm'
+import SortForm from './Temporary_Components/SortForm'
 import './App.css'
 import { AgentListContext } from './Temporary_Components/AgentListContext'
 
@@ -12,7 +13,8 @@ function App() {
     // 3) currentProfile = profile that is being created/updated
 
     const [profiles, setProfiles] = useState([])
-    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
+    const [isSortModalOpen, setIsSortModalOpen] = useState(false)
     const [currentProfile, setCurrentProfile] = useState([])
 
     const [agents, setAgents] = useState([])
@@ -39,32 +41,48 @@ function App() {
 
 
     // sets isModalOpen = False and clears currentProfile
-    const closeModal = () => {
-        setIsModalOpen(false)
+    const closeProfileModal = () => {
+        setIsProfileModalOpen(false)
         setCurrentProfile({})
+    }
+
+    // sets isModalOpen = False and clears currentProfile
+    const closeSortModal = () => {
+        setIsSortModalOpen(false)
     }
 
     // Create Profile: sets isModalOpen = True if it isn't already open
     const openCreateModal =() => {
-        if (!isModalOpen) {
-            setIsModalOpen(true)
+        if (!isProfileModalOpen) {
+            setIsProfileModalOpen(true)
+        }
+    }
+
+    const openSortModal= () => {
+        if (!isSortModalOpen) {
+            setIsSortModalOpen(true)
         }
     }
 
     // Update Profile: sets isModalOpen = False and sets currentProfile = given profile if it isn't open
     const openEditModal = (profile) => {
-        if (isModalOpen) {
+        if (isProfileModalOpen) {
             return
         } else {
             setCurrentProfile(profile)
-            setIsModalOpen(true)
+            setIsProfileModalOpen(true)
         }
     }
 
     // Update Profile: closes Modal and refreshes Profile List
     const onUpdate = () => {
-        closeModal()
+        closeProfileModal()
         fetchProfiles()
+    }
+
+    // Update Profile: closes Modal and refreshes Profile List
+    const onSort = () => {
+        closeSortModal()
     }
 
     return (
@@ -72,20 +90,39 @@ function App() {
         {/* Displays the ProfileList */}
         <ProfileList profiles={profiles} updateProfile = {openEditModal} updateCallback={onUpdate}/>
 
+        {/* BUTTON: Calls openSortModal when pressed */}
+        <button onClick={openSortModal}>Sort by</button>
         {/* BUTTON: Calls openCreateModal when pressed */}
         <button onClick={openCreateModal}>Create New Profile</button>
+        
 
         {/* If creating/updating a profile, display the modal (aka pop-up) */}
-        {isModalOpen && <div className="modal">
+        {isProfileModalOpen && <div className="modal">
             <div className="modal-content">
 
-                {/* BUTTON: Calls closeModal when pressed */}
-                <span className="close" onClick={closeModal}>&times;</span>
+                {/* BUTTON: Calls closeProfileModal when pressed */}
+                <span className="close" onClick={closeProfileModal}>&times;</span>
 
                 {/* Displays the ProfileForm */}
                 <AgentListContext.Provider value = {agents}>
                     <ProfileForm existingProfile={currentProfile} updateCallback={onUpdate}/>
                 </AgentListContext.Provider>      
+                
+                </div>
+            </div>
+            }
+        
+        {/* If sorting list, display the modal (aka pop-up) */}
+        {isSortModalOpen && <div className="modal">
+            <div className="modal-content">
+
+                {/* BUTTON: Calls closeSortModal when pressed */}
+                <span className="close" onClick={closeSortModal}>&times;</span>
+
+                {/* Displays the SortForm */}
+                <AgentListContext.Provider value = {agents}>
+                    <SortForm profileList = {profiles} setProfileList = {setProfiles} sortCallback={onSort}/>  
+                </AgentListContext.Provider>   
                 
                 </div>
             </div>
