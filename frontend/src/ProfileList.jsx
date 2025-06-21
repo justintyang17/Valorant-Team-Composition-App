@@ -1,6 +1,8 @@
 import React from "react"
+import TeamCheckBox from "./Temporary_Components/TeamCheckBox"
 
-const ProfileList = ({profiles, updateProfile, updateCallback}) => {
+const ProfileList = ({profiles, updateProfile, updateCallback, teamCallback}) => {
+
     const onDelete = async (id) => {
         // Try to delete the profile based on the ID
         try {
@@ -19,9 +21,7 @@ const ProfileList = ({profiles, updateProfile, updateCallback}) => {
         }
     }
 
-    
     return <div>
-        <h2> Profiles</h2>
         <table>
             {/* Header Information */}
             <thead></thead>
@@ -30,6 +30,7 @@ const ProfileList = ({profiles, updateProfile, updateCallback}) => {
                     <th>Player User</th>
                     <th>Player Rank</th>
                     <th>Actions</th>
+                    <th>Add to Team</th>
                 </tr>
             <tbody>
                 {/* For each Profile in given list, displays information + buttons */}
@@ -43,6 +44,9 @@ const ProfileList = ({profiles, updateProfile, updateCallback}) => {
                             <button onClick={() => updateProfile(profile)}>Edit</button>
                             {/* BUTTON: Calls onDelete when pressed */}
                             <button onClick={() => onDelete(profile.id)}>Delete</button>
+                        </td>
+                        <td>
+                            <TeamCheckBox profile={profile} teamCallback={teamCallback}/>
                         </td>
                     </tr>
                 ))}

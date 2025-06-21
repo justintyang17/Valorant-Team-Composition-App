@@ -3,6 +3,8 @@ import ProfileList from './ProfileList'
 import ProfileForm from './ProfileForm'
 import './App.css'
 import { AgentListContext } from './Temporary_Components/AgentListContext'
+import TeamBuilder from './Temporary_Components/TeamBuilder'
+import Stack from '@mui/material/Stack'
 
 // App component
 function App() {
@@ -18,6 +20,8 @@ function App() {
 
     const [sortField, setSortField] = useState("none")
     const [sortBy, setSortBy] = useState("none")
+
+    const [team, setTeam] = useState([])
 
     const [agents, setAgents] = useState([])
 
@@ -178,10 +182,52 @@ function App() {
         return total
     }
 
+    const editTeam = (profile, onTeam) => {
+        const newTeam = [...team]
+        if (onTeam) {
+            newTeam.push(profile)
+        } else {
+            const index = newTeam.indexOf(profile)
+            if (index > -1) {
+                newTeam.splice(index, 1)
+            }
+        }
+        setTeam(newTeam)
+    }
+
     return (
         <>
-            {/* Displays the ProfileList */}
-            <ProfileList profiles={profiles} updateProfile={openEditModal} updateCallback={onUpdate} />
+            <h2> Profiles</h2>
+            <Stack direction="row" spacing={10}>
+                {/* Displays the ProfileList */}
+                <div>
+                <ProfileList profiles={profiles} updateProfile={openEditModal} updateCallback={onUpdate} teamCallback={editTeam} />
+                    <>Sort Field:</>
+                    <select
+                        id="sortField"
+                        onChange={(e) => handleSortField(e.target.value)}>
+                        <option value="none">None</option>
+                        <option value="name">Name</option>
+                        <option value="username">Username</option>
+                        <option value="rank">Rank</option>
+                        <option value="agentProf">Agent Proficiency</option>
+                    </select>
+                    <>Sort By:</>
+                    <select
+                        id="sortBy"
+                        onChange={(e) => handleSortBy(e.target.value)}>
+                        <option value="none">None</option>
+                        <option value="ascending">Ascending</option>
+                        <option value="descending">Descending</option>
+                    </select>
+                    
+                    {/* BUTTON: Calls openCreateModal when pressed */}
+                    <button onClick={openCreateModal}>Create New Profile</button>
+                </div>
+
+                {/* Displays the TeamBuilder */}
+                <TeamBuilder teamList={team} />
+            </Stack>
 
             {/* If creating/updating a profile, display the modal (aka pop-up) */}
             {isProfileModalOpen && <div className="modal">
@@ -198,31 +244,6 @@ function App() {
             </div>
             }
 
-            <div>
-                <text>Sort Field:</text>
-                <select
-                    id="sortField"
-                    onChange={(e) => handleSortField(e.target.value)}>
-                    <option value="none">None</option>
-                    <option value="name">Name</option>
-                    <option value="username">Username</option>
-                    <option value="rank">Rank</option>
-                    <option value="agentProf">Agent Proficiency</option>
-                </select>
-                <text>Sort By:</text>
-                <select
-                    id="sortBy"
-                    onChange={(e) => handleSortBy(e.target.value)}>
-                    <option value="none">None</option>
-                    <option value="ascending">Ascending</option>
-                    <option value="descending">Descending</option>
-                </select>
-            </div>
-
-            {/* BUTTON: Calls openCreateModal when pressed */}
-            <button onClick={openCreateModal}>Create New Profile</button>
-
-            
             {isSortModalOpen &&
                 <div className="modal">
                     <div className="modal-content">
