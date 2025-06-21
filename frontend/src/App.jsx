@@ -3,6 +3,7 @@ import ProfileList from './ProfileList'
 import ProfileForm from './ProfileForm'
 import './App.css'
 import { AgentListContext } from './Temporary_Components/AgentListContext'
+import { TraitListContext } from './Temporary_Components/TraitListContext'
 import TeamBuilder from './Temporary_Components/TeamBuilder'
 import Stack from '@mui/material/Stack'
 
@@ -24,11 +25,13 @@ function App() {
     const [team, setTeam] = useState([])
 
     const [agents, setAgents] = useState([])
+    const [traits, setTraits] = useState([])
 
     // fetchProfiles ran ONCE when component (aka page) is opened or when explicitly called
     useEffect(() => {
         fetchProfiles()
         fetchAgents()
+        fetchTraits()
     }, [])
 
     // retrive player profiles from database
@@ -44,6 +47,13 @@ function App() {
         const response = await fetch("http://127.0.0.1:5000/agents")
         const data = await response.json()
         setAgents(data.agents)
+    }
+
+    // retrive traits from database
+    const fetchTraits = async () => {
+        const response = await fetch("http://127.0.0.1:5000/traits")
+        const data = await response.json()
+        setTraits(data.traits)
     }
 
 
@@ -89,6 +99,7 @@ function App() {
         updateTeam(updatedProfile)
     }
 
+    //#region: SORTING
     // Update Profile: closes Modal and refreshes Profile List
     const onSort = () => {
         closeSortModal()
@@ -185,6 +196,9 @@ function App() {
         return total
     }
 
+    //#endregion
+
+    //#region: TEAMBUIDLER
     const editTeam = (profile, onTeam) => {
         let newTeam = []
         if (onTeam) {
@@ -205,6 +219,7 @@ function App() {
             setTeam(tempTeam)
         }
     }
+    //#endregion
         
     return (
         <>
@@ -238,7 +253,9 @@ function App() {
 
                 {/* Displays the TeamBuilder */}
                 <AgentListContext.Provider value={agents}>
-                    <TeamBuilder teamList={team} />
+                    <TraitListContext.Provider value={traits}>
+                        <TeamBuilder teamList={team} />
+                    </TraitListContext.Provider> 
                 </AgentListContext.Provider>
             </Stack>
 
@@ -251,7 +268,9 @@ function App() {
 
                     {/* Displays the ProfileForm */}
                     <AgentListContext.Provider value={agents}>
-                        <ProfileForm existingProfile={currentProfile} updateCallback={onUpdate} />
+
+                            <ProfileForm existingProfile={currentProfile} updateCallback={onUpdate} />
+
                     </AgentListContext.Provider>
                 </div>
             </div>

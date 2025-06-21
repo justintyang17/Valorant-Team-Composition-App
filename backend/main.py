@@ -48,6 +48,14 @@ def get_template():
 
     return jsonify({"template": template})
 
+# 1.4) Get Agent Traits
+@app.route("/traits", methods=["GET"]) # Decorater: defines the endroute (/profiles) + valid methods for that endroute URL
+def get_traits():
+    # uses Flask SQLAlchemy to retrieve all agents from database
+    traits = AgentTraitTable.query.all()
+    # convert each python object in profiles into JSON objects
+    json_traits = list(map(lambda x: x.to_json(), traits))
+    return jsonify({"traits": json_traits})
 
 # 2) Create Profile
 @app.route("/create_profile", methods=["POST"])
