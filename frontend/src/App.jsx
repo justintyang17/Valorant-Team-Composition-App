@@ -36,6 +36,7 @@ function App() {
         const response = await fetch("http://127.0.0.1:5000/profiles")
         const data = await response.json()
         setProfiles(data.profiles)
+        return data.profiles
     }
 
     // retrive agents from database
@@ -81,9 +82,11 @@ function App() {
     }
 
     // Update Profile: closes Modal and refreshes Profile List
-    const onUpdate = () => {
+    const onUpdate = async () => {
         closeProfileModal()
-        fetchProfiles()
+        const updatedProfiles = await fetchProfiles()
+        const updatedProfile = updatedProfiles.find(p => p.id === currentProfile.id)
+        updateTeam(updatedProfile)
     }
 
     // Update Profile: closes Modal and refreshes Profile List
@@ -183,18 +186,26 @@ function App() {
     }
 
     const editTeam = (profile, onTeam) => {
-        const newTeam = [...team]
+        let newTeam = []
         if (onTeam) {
-            newTeam.push(profile)
-        } else {
-            const index = newTeam.indexOf(profile)
-            if (index > -1) {
-                newTeam.splice(index, 1)
+            if (!team.find(p=>p.id === profile.id)) {
+                newTeam = [...team, profile]
             }
+        } else {
+            newTeam = team.filter(p=>p.id !== profile.id)
         }
         setTeam(newTeam)
-    }
+      }
 
+    const updateTeam = (profile) => {
+        const tempTeam = [...team]
+        const index = tempTeam.findIndex(p => p.id === profile.id)
+        if (index !== -1) {
+            tempTeam[index] = profile
+            setTeam(tempTeam)
+        }
+    }
+        
     return (
         <>
             <h2> Profiles</h2>
@@ -226,7 +237,9 @@ function App() {
                 </div>
 
                 {/* Displays the TeamBuilder */}
-                <TeamBuilder teamList={team} />
+                <AgentListContext.Provider value={agents}>
+                    <TeamBuilder teamList={team} />
+                </AgentListContext.Provider>
             </Stack>
 
             {/* If creating/updating a profile, display the modal (aka pop-up) */}
