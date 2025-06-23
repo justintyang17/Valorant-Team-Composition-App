@@ -1,9 +1,11 @@
 import React from "react"
 import AgentPool from './AgentPool'
+import AgentPool2 from './AgentPool2'
 import Accordion from '@mui/material/Accordion';
 import Grid from '@mui/material/Grid';
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
+
 
 const MapPool = ({existingProfileMapPool=[]}) => {
 
@@ -36,7 +38,8 @@ const MapPool = ({existingProfileMapPool=[]}) => {
                             </Grid>
                         </AccordionSummary>
                         <AccordionDetails>
-                            <AgentPool mapAgentPool={mapObj.agentPool} map = {mapObj.map}/>
+                            {/*<AgentPool mapAgentPool={mapObj.agentPool} map = {mapObj.map}/>*/}
+                            <AgentPool2 mapAgentPool={mapObj.agentPool} map = {mapObj.map}/>
                         </AccordionDetails>
                     </Accordion>
                     
