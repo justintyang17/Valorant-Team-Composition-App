@@ -42,7 +42,60 @@ const TeamBuilder = ({ teamList = [] }) => {
 
     const buildComp = (teamList, mapName) => {
         alert("traits length = " + traits.length)
-        let teamMapList = []
+        let teamMapList = createTeamMapList(teamList, mapName)
+
+        alert("tempMapList created")
+        let traitIndex = 0
+        let result = []
+        bigloop: while (teamMapList.length !== 0) {
+            let addedPlayer = false
+            // trait trying to find
+            const currTrait = traitList[traitIndex]
+            // loop through each player
+            for (const playerObj of teamMapList) {
+                // loop through each agent in prof = 2 list
+                for (const agent of playerObj.high) {
+                    const agentTraits = traits.filter(t => t.agentID === agent.agentID)
+                    // if there is agent that has trait that matches curr trait
+                    // 1) Add new pair obj to result
+                    // 2) Increment traitIndex 
+                    // 3) Remove Player from teamMapList
+                    // 4) Restart traitIndex if goes out of bounds
+                    if (agentTraits.find(trait => trait.trait === currTrait) && !containsAgent(agent, result)) {
+                        const pairObj = { name: playerObj.name, agent: agents.find((a) => a.agentID == agent.agentID).agentName }
+                        alert("Added Player: " + pairObj.name + " on agent " + pairObj.agent + " for " + currTrait)
+                        result.push(pairObj)
+                        traitIndex = (traitIndex + 1) % traitList.length;
+                        teamMapList = teamMapList.filter(player => player.name !== playerObj.name)
+                        addedPlayer = true
+                        continue bigloop
+                    }
+                }
+            }
+            if (!addedPlayer) {
+                for (const playerObj of teamMapList) {
+                    for (const agent of playerObj.low) {
+                        const agentTraits = traits.filter(t => t.agentID === agent.agentID)
+                        if (agentTraits.find(trait => trait.trait === currTrait) && !containsAgent(agent, result)) {
+                            const pairObj = { name: playerObj.name, agent: agents.find((a) => a.agentID == agent.agentID).agentName }
+                            alert("Added Player: " + pairObj.name + " on agent " + pairObj.agent + " for " + currTrait)
+                            result.push(pairObj)
+                            traitIndex = (traitIndex + 1) % traitList.length;
+                            teamMapList = teamMapList.filter(player => player.name !== playerObj.name)
+                            addedPlayer = true
+                            continue bigloop
+                        }
+                    }
+                }
+            }
+
+            if (!addedPlayer) {
+                traitIndex = (traitIndex + 1) % traitList.length;
+            }
+        }
+    }
+
+    const createTeamMapList = (teamList, mapName) => {
         //create playerObj for each teammate (represents which agents they can play)
         for (let i = 0; i < 5; i++) {
             const playerMapPool = teamList[i].playerMapPool.find(m => m.map == mapName)
@@ -66,70 +119,6 @@ const TeamBuilder = ({ teamList = [] }) => {
         teamMapList.sort((a, b) => {
             return a.score - b.score
         })
-
-        alert("tempMapList created")
-        let traitIndex = 0
-        let result = []
-        bigloop: while (teamMapList.length !== 0) {
-            let addedPlayer = false
-            // trait trying to find
-            const currTrait = traitList[traitIndex]
-            // loop through each player
-            for (const playerObj of teamMapList) {
-                // loop through each agent in prof = 2 list
-                for (const agent of playerObj.high) {
-                    const agentTraits = traits.filter(t => t.agentID === agent.agentID)
-                    // if there is agent that has trait that matches curr trait
-                    // 1) Add new pair obj to result
-                    // 2) Increment traitIndex 
-                    // 3) Remove Player from teamMapList
-                    // 4) Restart traitIndex if goes out of bounds
-                    if (agentTraits.find(trait => trait.trait === currTrait) && !containsAgent(agent, result)) {
-                        const pairObj = { name: playerObj.name, agent: agents.find((a) => a.agentID == agent.agentID).agentName }
-                        alert("Added Player: " + pairObj.name + " on agent " + pairObj.agent + " for " + currTrait)
-                        result.push(pairObj)
-                        traitIndex++
-                        teamMapList = teamMapList.filter(player => player.name !== playerObj.name)
-                        if (traitIndex == traitList.length) {
-                            traitIndex = 0
-                        }
-                        addedPlayer = true
-                        continue bigloop
-                    }
-                }
-            }
-            if (!addedPlayer) {
-                for (const playerObj of teamMapList) {
-                    for (const agent of playerObj.low) {
-                        const agentTraits = traits.filter(t => t.agentID === agent.agentID)
-                        if (agentTraits.find(trait => trait.trait === currTrait) && !containsAgent(agent, result)) {
-                            const pairObj = { name: playerObj.name, agent: agents.find((a) => a.agentID == agent.agentID).agentName }
-                            alert("Added Player: " + pairObj.name + " on agent " + pairObj.agent + " for " + currTrait)
-                            result.push(pairObj)
-                            traitIndex++
-                            teamMapList = teamMapList.filter(player => player.name !== playerObj.name)
-                            if (traitIndex == traitList.length) {
-                                traitIndex = 0
-                            }
-                            addedPlayer = true
-                            continue bigloop
-                        }
-                    }
-                }
-            }
-
-            if (!addedPlayer) {
-                traitIndex++
-                if (traitIndex >= traitList.length) {
-                    traitIndex = 0
-                }
-            }
-        }
-        let temp = 1
-        for (const pair of result) {
-            alert("Player " + temp + ": " + pair.name + " is using " + pair.agent)
-            temp++
-        }
     }
 
     const containsAgent = (agentName, playerObjList) => {

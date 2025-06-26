@@ -30,11 +30,31 @@ def initializeDuelists():
         agent_name="Phoenix",
         agent_role= RoleEnum.DUELIST
     )
+    yoru = AgentTable(
+        agent_name="Yoru",
+        agent_role= RoleEnum.DUELIST
+    )
+    neon = AgentTable(
+        agent_name="Neon",
+        agent_role= RoleEnum.DUELIST
+    )
+    iso = AgentTable(
+        agent_name="Iso",
+        agent_role= RoleEnum.DUELIST
+    )
+    waylay = AgentTable(
+        agent_name="Waylay",
+        agent_role= RoleEnum.DUELIST
+    )
 
     db.session.add(jett)
     db.session.add(raze)
     db.session.add(reyna)
     db.session.add(phoenix)
+    db.session.add(yoru)
+    db.session.add(neon)
+    db.session.add(iso)
+    db.session.add(waylay)
     db.session.flush()
 
     jett_entry = AgentTraitTable(
@@ -61,12 +81,32 @@ def initializeDuelists():
         agent_id = phoenix.agent_id,
         trait = TraitEnum.STALL
     )
+    yoru_flash = AgentTraitTable(
+        agent_id = yoru.agent_id,
+        trait = TraitEnum.FLASH
+    )
+    neon_entry = AgentTraitTable(
+        agent_id = neon.agent_id,
+        trait = TraitEnum.ENTRY
+    ) 
+    iso_stall = AgentTraitTable(
+        agent_id = iso.agent_id,
+        trait = TraitEnum.STALL
+    ) 
+    waylay_entry = AgentTraitTable(
+        agent_id = waylay.agent_id,
+        trait = TraitEnum.ENTRY
+    ) 
     db.session.add(jett_entry)
     db.session.add(raze_entry)
     db.session.add(raze_stall)
     db.session.add(reyna_flash)
     db.session.add(phoenix_flash)
     db.session.add(phoenix_stall)
+    db.session.add(yoru_flash)
+    db.session.add(neon_entry)
+    db.session.add(iso_stall)
+    db.session.add(waylay_entry)
     db.session.commit()
 
 # Creates all Initiator entries for Agent table
@@ -87,10 +127,25 @@ def initializeInitiators():
         agent_name="Breach",
         agent_role= RoleEnum.INITIATOR
         )
+    kayo = AgentTable(
+        agent_name="Kayo",
+        agent_role= RoleEnum.INITIATOR
+        )
+    gekko = AgentTable(
+        agent_name="Gekko",
+        agent_role= RoleEnum.INITIATOR
+        )
+    tejo = AgentTable(
+        agent_name="Tejo",
+        agent_role= RoleEnum.INITIATOR
+        )
     db.session.add(sova)
     db.session.add(fade)
     db.session.add(skye)
     db.session.add(breach)
+    db.session.add(kayo)
+    db.session.add(gekko)
+    db.session.add(tejo)
     db.session.flush()
 
     sova_recon = AgentTraitTable(
@@ -117,12 +172,47 @@ def initializeInitiators():
         agent_id = breach.agent_id,
         trait = TraitEnum.STALL
     )
+    kayo_flash = AgentTraitTable(
+        agent_id = kayo.agent_id,
+        trait = TraitEnum.FLASH
+    )
+    kayo_recon = AgentTraitTable(
+        agent_id = kayo.agent_id,
+        trait = TraitEnum.RECON
+    )
+    kayo_stall = AgentTraitTable(
+        agent_id = kayo.agent_id,
+        trait = TraitEnum.STALL
+    )
+    gekko_recon = AgentTraitTable(
+        agent_id = gekko.agent_id,
+        trait = TraitEnum.RECON
+    )
+    gekko_stall = AgentTraitTable(
+        agent_id = gekko.agent_id,
+        trait = TraitEnum.STALL
+    )
+    tejo_recon = AgentTraitTable(
+        agent_id = tejo.agent_id,
+        trait = TraitEnum.RECON
+    )
+    tejo_stall= AgentTraitTable(
+        agent_id = tejo.agent_id,
+        trait = TraitEnum.STALL
+    )
     db.session.add(sova_recon)
     db.session.add(fade_recon)
     db.session.add(skye_flash)
     db.session.add(skye_recon)
     db.session.add(breach_flash)
     db.session.add(breach_stall)
+    db.session.add(kayo_flash)
+    db.session.add(kayo_recon)
+    db.session.add(kayo_stall)
+    db.session.add(gekko_recon)
+    db.session.add(gekko_stall)
+    db.session.add(tejo_recon)
+    db.session.add(tejo_stall)
     db.session.commit()
 
 # Creates all Controller entries for Agent table
@@ -143,10 +233,20 @@ def initializeControllers():
         agent_name="Harbour",
         agent_role= RoleEnum.CONTROLLER
         )
+    astra = AgentTable(
+        agent_name="Astra",
+        agent_role= RoleEnum.CONTROLLER
+        )
+    clove = AgentTable(
+        agent_name="Clove",
+        agent_role= RoleEnum.CONTROLLER
+        )
     db.session.add(omen)
     db.session.add(brim)
     db.session.add(viper)
     db.session.add(harbour)
+    db.session.add(clove)
+    db.session.add(astra)
     db.session.flush()
 
     omen_bsmoke = AgentTraitTable(
@@ -156,6 +256,10 @@ def initializeControllers():
     brim_bsmoke = AgentTraitTable(
         agent_id = brim.agent_id,
         trait = TraitEnum.BALL_SMOKES
+    )
+    brim_stall = AgentTraitTable(
+        agent_id = brim.agent_id,
+        trait = TraitEnum.STALL
     )
     viper_wsmoke = AgentTraitTable(
         agent_id = viper.agent_id,
@@ -169,12 +273,27 @@ def initializeControllers():
         agent_id = harbour.agent_id,
         trait = TraitEnum.WALL_SMOKES
     )
-
+    clove_bsmoke = AgentTraitTable(
+        agent_id = clove.agent_id,
+        trait = TraitEnum.BALL_SMOKES
+    )
+    astra_bsmoke = AgentTraitTable(
+        agent_id = astra.agent_id,
+        trait = TraitEnum.BALL_SMOKES
+    )
+    astra_stall = AgentTraitTable(
+        agent_id = astra.agent_id,
+        trait = TraitEnum.STALL
+    )
     db.session.add(omen_bsmoke)
     db.session.add(brim_bsmoke)
+    db.session.add(brim_stall)
     db.session.add(viper_wsmoke)
     db.session.add(viper_stall)
     db.session.add(harbour_wsmoke)
+    db.session.add(clove_bsmoke)
+    db.session.add(astra_bsmoke)
+    db.session.add(astra_stall)
     db.session.commit()
 
 # Creates all Sentinel entries for Agent table
@@ -196,11 +315,21 @@ def initializeSentinels():
         agent_name="Vyse",
         agent_role= RoleEnum.SENTINEL
     )
+    chamber = AgentTable(
+        agent_name="Chamber",
+        agent_role= RoleEnum.SENTINEL
+    )
+    deadlock = AgentTable(
+        agent_name="Deadlock",
+        agent_role= RoleEnum.SENTINEL
+    )
 
     db.session.add(sage)
     db.session.add(killjoy)
     db.session.add(cypher)
     db.session.add(vyse)
+    db.session.add(chamber)
+    db.session.add(deadlock)
     db.session.flush()
 
     sage_stall = AgentTraitTable(
@@ -227,6 +356,14 @@ def initializeSentinels():
         agent_id = vyse.agent_id,
         trait = TraitEnum.TRIPS
     )
+    chamber_trips = AgentTraitTable(
+        agent_id = chamber.agent_id,
+        trait = TraitEnum.TRIPS
+    )
+    deadlock_stall = AgentTraitTable(
+        agent_id = deadlock.agent_id,
+        trait = TraitEnum.STALL
+    )
 
     db.session.add(sage_stall)
     db.session.add(killjoy_stall)
@@ -234,4 +371,6 @@ def initializeSentinels():
     db.session.add(cypher_trips)
     db.session.add(vyse_stall)
     db.session.add(vyse_trips)
+    db.session.add(chamber_trips)
+    db.session.add(deadlock_stall)
     db.session.commit()

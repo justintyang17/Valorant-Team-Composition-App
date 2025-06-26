@@ -27,10 +27,10 @@ const MapPool = ({existingProfileMapPool=[]}) => {
                     <Accordion>
                         <AccordionSummary>
                             <Grid>
-                                <Grid item spacing={6}>
+                                <Grid spacing={6}>
                                     <h3>Agent Pool for {mapObj.map}</h3>
                                 </Grid>
-                                <Grid item>
+                                <Grid>
                                     <Message
                                     agentPool = {mapObj.agentPool}
                                     />
@@ -38,8 +38,8 @@ const MapPool = ({existingProfileMapPool=[]}) => {
                             </Grid>
                         </AccordionSummary>
                         <AccordionDetails>
-                            {/*<AgentPool mapAgentPool={mapObj.agentPool} map = {mapObj.map}/>*/}
                             <AgentPool2 mapAgentPool={mapObj.agentPool} map = {mapObj.map}/>
+                            {/*<AgentPool mapAgentPool={mapObj.agentPool} map = {mapObj.map}/>*/}
                         </AccordionDetails>
                     </Accordion>
                     
