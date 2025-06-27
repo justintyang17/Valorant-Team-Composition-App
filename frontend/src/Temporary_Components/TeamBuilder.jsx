@@ -14,7 +14,14 @@ const TeamBuilder = ({ teamList = [] }) => {
         "HAVEN",
         "SPLIT",
         "ASCENT",
-        "ICEBOX"
+        "ICEBOX",
+        "BREEZE",
+        "FRACTURE",
+        "PEARL",
+        "LOTUS",
+        "SUNSET",
+        "ABYSS",
+        "CORRODE"
     ]
 
     const traitList = [

@@ -165,7 +165,26 @@ function App() {
         BRONZE_1: 4,
         BRONZE_2: 5,
         BRONZE_3: 6,
-    };
+        SILVER_1: 7,
+        SILVER_2: 8,
+        SILVER_3: 9,
+        GOLD_1: 10,
+        GOLD_2: 11,
+        GOLD_3: 12,
+        PLATINUM_1: 13,
+        PLATINUM_2: 14,
+        PLATINUM_3: 15,
+        DIAMOND_1: 16,
+        DIAMOND_2: 17,
+        DIAMOND_3: 18,
+        ASCENDANT_1: 19,
+        ASCENDANT_2: 20,
+        ASCENDANT_3: 21,
+        IMMORTAL_1: 22,
+        IMMORTAL_2: 23,
+        IMMORTAL_3: 24,
+        RADIANT: 25
+    }
 
     const sortByRank = (ascending) => {
         const sortedprofiles = profiles.toSorted((a, b) => {
