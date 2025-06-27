@@ -1,10 +1,12 @@
-import { useContext, useState } from 'react'
+import { use, useContext, useState } from 'react'
 import { AgentListContext } from './AgentListContext'
 import { TraitListContext } from './TraitListContext'
 
 const TeamBuilder = ({ teamList = [] }) => {
 
     const [currMap, setCurrMap] = useState()
+    const [builtTeam, setBuiltTeam] = useState([])
+    const [teamModalOpen, setTeamModalOpen] = useState(false)
 
     const agents = useContext(AgentListContext)
     const traits = useContext(TraitListContext)
@@ -60,20 +62,29 @@ const TeamBuilder = ({ teamList = [] }) => {
             const currTrait = traitList[traitIndex]
             // loop through each player
             for (const playerObj of teamMapList) {
+                if (emptyPool(playerObj)) {
+                    alert(playerObj.name + " doesn't have any agents they can play!")
+                    return
+                }
                 // loop through each agent in prof = 2 list
                 for (const agent of playerObj.high) {
                     const agentTraits = traits.filter(t => t.agentID === agent.agentID)
                     // if there is agent that has trait that matches curr trait
                     // 1) Add new pair obj to result
-                    // 2) Increment traitIndex 
+                    // 2) Increment traitIndex, restart traitIndex if goes out of bounds
                     // 3) Remove Player from teamMapList
-                    // 4) Restart traitIndex if goes out of bounds
+                    // 4) Remove Agent from other player's pools
                     if (agentTraits.find(trait => trait.trait === currTrait) && !containsAgent(agent, result)) {
-                        const pairObj = { name: playerObj.name, agent: agents.find((a) => a.agentID == agent.agentID).agentName }
-                        alert("Added Player: " + pairObj.name + " on agent " + pairObj.agent + " for " + currTrait)
+                        // 1)
+                        const pairObj = { name: playerObj.name, agent: agents.find((a) => a.agentID == agent.agentID) }
+                        alert("Added Player: " + pairObj.name + " on agent " + pairObj.agent.agentName + " for " + currTrait)
                         result.push(pairObj)
+                        // 2)
                         traitIndex = (traitIndex + 1) % traitList.length;
+                        // 3) 
                         teamMapList = teamMapList.filter(player => player.name !== playerObj.name)
+                        // 4) 
+                        teamMapList = removeAgent(teamMapList, agent)
                         addedPlayer = true
                         continue bigloop
                     }
@@ -81,14 +92,19 @@ const TeamBuilder = ({ teamList = [] }) => {
             }
             if (!addedPlayer) {
                 for (const playerObj of teamMapList) {
+                    if (emptyPool(playerObj)) {
+                        alert(playerObj.name + " doesn't have any agents they can play!")
+                        return
+                    }
                     for (const agent of playerObj.low) {
                         const agentTraits = traits.filter(t => t.agentID === agent.agentID)
                         if (agentTraits.find(trait => trait.trait === currTrait) && !containsAgent(agent, result)) {
-                            const pairObj = { name: playerObj.name, agent: agents.find((a) => a.agentID == agent.agentID).agentName }
-                            alert("Added Player: " + pairObj.name + " on agent " + pairObj.agent + " for " + currTrait)
+                            const pairObj = { name: playerObj.name, agent: agents.find((a) => a.agentID == agent.agentID) }
+                            alert("Added Player: " + pairObj.name + " on agent " + pairObj.agent.agentName + " for " + currTrait)
                             result.push(pairObj)
                             traitIndex = (traitIndex + 1) % traitList.length;
                             teamMapList = teamMapList.filter(player => player.name !== playerObj.name)
+                            teamMapList = removeAgent(teamMapList, agent)
                             addedPlayer = true
                             continue bigloop
                         }
@@ -100,9 +116,13 @@ const TeamBuilder = ({ teamList = [] }) => {
                 traitIndex = (traitIndex + 1) % traitList.length;
             }
         }
+
+        setBuiltTeam(result)
+        setTeamModalOpen(true)
     }
 
     const createTeamMapList = (teamList, mapName) => {
+        let teamMapList = []
         //create playerObj for each teammate (represents which agents they can play)
         for (let i = 0; i < 5; i++) {
             const playerMapPool = teamList[i].playerMapPool.find(m => m.map == mapName)
@@ -126,21 +146,40 @@ const TeamBuilder = ({ teamList = [] }) => {
         teamMapList.sort((a, b) => {
             return a.score - b.score
         })
+
+        return teamMapList
     }
 
     const containsAgent = (agentName, playerObjList) => {
-        const agents =[]
+        const agents = []
         for (const player of playerObjList) {
             agents.push(player.agent)
         }
         return agents.includes(agentName)
     }
 
+    const removeAgent = (teamList, agent) => {
+        let newTeamList = teamList
+        for (const player of newTeamList) {
+            player.high = player.high.filter(a => a.agentID !== agent.agentID)
+            player.low = player.low.filter(a => a.agentID !== agent.agentID)
+        }
+        return newTeamList
+    }
+
+    const emptyPool = (playerObj) => {
+        return playerObj.high.length == 0 && playerObj.low.length == 0
+    }
+
+    const closeTeamModal = () => {
+        setTeamModalOpen(false)
+    }
+
     return <div>
         <h3>Current Team</h3>
-        <ul>
+        <ul style={{ display: 'flex', listStyle: 'none' }}>
             {teamList.map((player) => (
-                <li key={player.id}>{player.playerName}</li>
+                <li key={player.id} style={{ marginRight: '10px' }}>{player.playerName}</li>
             ))}
         </ul>
         <WarningMessage />
@@ -156,6 +195,20 @@ const TeamBuilder = ({ teamList = [] }) => {
             ))}
         </div>
         <button disabled={teamList.length != 5 || currMap == null} onClick={() => buildComp(teamList, currMap)}>Build Comp</button>
+
+        {teamModalOpen && <div className="modal">
+            <div className="modal-content">
+                <span className="close" onClick={closeTeamModal}>&times;</span>
+                <div style={{ display: "flex", flexDirection: "row", gap: "40px", padding: "20px", justifyContent: "center"}}>
+                    {builtTeam.map((player, i) => (
+                        <div key={i} style={{ textAlign: "center" }}>
+                            <div>{player.name}</div>
+                            <div>{player.agent.agentName}</div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>}
     </div>
 }
 
