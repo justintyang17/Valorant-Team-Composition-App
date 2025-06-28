@@ -15,36 +15,44 @@ def initializeAssets():
 def initializeDuelists():
     jett = AgentTable(
         agent_name="Jett",
-        agent_role= RoleEnum.DUELIST
+        agent_role= RoleEnum.DUELIST,
+        agent_img="../images/agents/jett.webp"
         )
     
     raze = AgentTable(
         agent_name="Raze",
-        agent_role= RoleEnum.DUELIST
+        agent_role= RoleEnum.DUELIST,
+        agent_img="../images/agents/raze.webp"
         )
     reyna = AgentTable(
         agent_name="Reyna",
-        agent_role= RoleEnum.DUELIST
+        agent_role= RoleEnum.DUELIST,
+        agent_img="../images/agents/reyna.webp"
     )
     phoenix = AgentTable(
         agent_name="Phoenix",
-        agent_role= RoleEnum.DUELIST
+        agent_role= RoleEnum.DUELIST,
+        agent_img="../images/agents/phoenix.webp"
     )
     yoru = AgentTable(
         agent_name="Yoru",
-        agent_role= RoleEnum.DUELIST
+        agent_role= RoleEnum.DUELIST,
+        agent_img="../images/agents/yoru.webp"
     )
     neon = AgentTable(
         agent_name="Neon",
-        agent_role= RoleEnum.DUELIST
+        agent_role= RoleEnum.DUELIST,
+        agent_img="../images/agents/neon.webp"
     )
     iso = AgentTable(
         agent_name="Iso",
-        agent_role= RoleEnum.DUELIST
+        agent_role= RoleEnum.DUELIST,
+        agent_img="../images/agents/iso.webp"
     )
     waylay = AgentTable(
         agent_name="Waylay",
-        agent_role= RoleEnum.DUELIST
+        agent_role= RoleEnum.DUELIST,
+        agent_img="../images/agents/waylay.webp"
     )
 
     db.session.add(jett)
@@ -113,31 +121,38 @@ def initializeDuelists():
 def initializeInitiators():
     sova = AgentTable(
         agent_name="Sova",
-        agent_role= RoleEnum.INITIATOR
+        agent_role= RoleEnum.INITIATOR,
+        agent_img="../images/agents/sova.webp"
         )
     fade = AgentTable(
         agent_name="Fade",
-        agent_role= RoleEnum.INITIATOR
+        agent_role= RoleEnum.INITIATOR,
+        agent_img="../images/agents/fade.webp"
         )
     skye = AgentTable(
         agent_name="Skye",
-        agent_role= RoleEnum.INITIATOR
+        agent_role= RoleEnum.INITIATOR,
+        agent_img="../images/agents/skye.webp"
         )
     breach = AgentTable(
         agent_name="Breach",
-        agent_role= RoleEnum.INITIATOR
+        agent_role= RoleEnum.INITIATOR,
+        agent_img="../images/agents/breach.webp"
         )
     kayo = AgentTable(
         agent_name="Kayo",
-        agent_role= RoleEnum.INITIATOR
+        agent_role= RoleEnum.INITIATOR,
+        agent_img="../images/agents/kayo.webp"
         )
     gekko = AgentTable(
         agent_name="Gekko",
-        agent_role= RoleEnum.INITIATOR
+        agent_role= RoleEnum.INITIATOR,
+        agent_img="../images/agents/gekko.webp"
         )
     tejo = AgentTable(
         agent_name="Tejo",
-        agent_role= RoleEnum.INITIATOR
+        agent_role= RoleEnum.INITIATOR,
+        agent_img="../images/agents/tejo.webp"
         )
     db.session.add(sova)
     db.session.add(fade)
@@ -219,27 +234,33 @@ def initializeInitiators():
 def initializeControllers():
     omen = AgentTable(
         agent_name="Omen",
-        agent_role= RoleEnum.CONTROLLER
+        agent_role= RoleEnum.CONTROLLER,
+        agent_img="../images/agents/omen.webp"
         )
     brim = AgentTable(
         agent_name="Brim",
-        agent_role= RoleEnum.CONTROLLER
+        agent_role= RoleEnum.CONTROLLER,
+        agent_img="../images/agents/brim.webp"
         )
     viper = AgentTable(
         agent_name="Viper",
-        agent_role= RoleEnum.CONTROLLER
+        agent_role= RoleEnum.CONTROLLER,
+        agent_img="../images/agents/viper.webp"
         )
     harbour = AgentTable(
         agent_name="Harbour",
-        agent_role= RoleEnum.CONTROLLER
+        agent_role= RoleEnum.CONTROLLER,
+        agent_img="../images/agents/harbour.webp"
         )
     astra = AgentTable(
         agent_name="Astra",
-        agent_role= RoleEnum.CONTROLLER
+        agent_role= RoleEnum.CONTROLLER,
+        agent_img="../images/agents/astra.webp"
         )
     clove = AgentTable(
         agent_name="Clove",
-        agent_role= RoleEnum.CONTROLLER
+        agent_role= RoleEnum.CONTROLLER,
+        agent_img="../images/agents/clove.webp"
         )
     db.session.add(omen)
     db.session.add(brim)
@@ -300,28 +321,34 @@ def initializeControllers():
 def initializeSentinels():
     sage = AgentTable(
         agent_name="Sage",
-        agent_role= RoleEnum.SENTINEL
+        agent_role= RoleEnum.SENTINEL,
+        agent_img="../images/agents/sage.webp"
         )
     
     killjoy = AgentTable(
         agent_name="Killjoy",
-        agent_role= RoleEnum.SENTINEL
+        agent_role= RoleEnum.SENTINEL,
+        agent_img="../images/agents/killjoy.webp"
         )
     cypher = AgentTable(
         agent_name="Cypher",
-        agent_role= RoleEnum.SENTINEL
+        agent_role= RoleEnum.SENTINEL,
+        agent_img="../images/agents/cypher.webp"
     )
     vyse = AgentTable(
         agent_name="Vyse",
-        agent_role= RoleEnum.SENTINEL
+        agent_role= RoleEnum.SENTINEL,
+        agent_img="../images/agents/vyse.webp"
     )
     chamber = AgentTable(
         agent_name="Chamber",
-        agent_role= RoleEnum.SENTINEL
+        agent_role= RoleEnum.SENTINEL,
+        agent_img="../images/agents/chamber.webp"
     )
     deadlock = AgentTable(
         agent_name="Deadlock",
-        agent_role= RoleEnum.SENTINEL
+        agent_role= RoleEnum.SENTINEL,
+        agent_img="../images/agents/deadlock.webp"
     )
 
     db.session.add(sage)

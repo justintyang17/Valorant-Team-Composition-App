@@ -51,6 +51,7 @@ class AgentTable(db.Model):
     agent_id = db.Column(db.Integer, primary_key = True)
     agent_name = db.Column(db.String(100), nullable = False)
     agent_role = db.Column(db.Enum(RoleEnum), nullable = False)
+    agent_img = db.Column(db.String, nullable = False)
 
     # converts data into a dictionary 
     def to_json(self):
@@ -58,6 +59,7 @@ class AgentTable(db.Model):
             "agentID": self.agent_id,
             "agentName": self.agent_name,
             "agentRole": self.agent_role.name,
+            "agentImg" : self.agent_img
         }
 
 # Table storing which traits belong to which agents

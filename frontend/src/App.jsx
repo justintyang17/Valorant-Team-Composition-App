@@ -6,6 +6,7 @@ import { AgentListContext } from './Temporary_Components/AgentListContext'
 import { TraitListContext } from './Temporary_Components/TraitListContext'
 import TeamBuilder from './Temporary_Components/TeamBuilder'
 import Stack from '@mui/material/Stack'
+import Box from '@mui/material/Box'
 
 // App component
 function App() {
@@ -245,7 +246,7 @@ function App() {
             <h2> Profiles</h2>
             <Stack direction="row" spacing={10}>
                 {/* Displays the ProfileList */}
-                <div>
+                <Box sx={{ flex: 3 }}>
                 <ProfileList profiles={profiles} updateProfile={openEditModal} updateCallback={onUpdate} teamCallback={editTeam} />
                     <>Sort Field:</>
                     <select
@@ -268,14 +269,16 @@ function App() {
                     
                     {/* BUTTON: Calls openCreateModal when pressed */}
                     <button onClick={openCreateModal}>Create New Profile</button>
-                </div>
-
-                {/* Displays the TeamBuilder */}
-                <AgentListContext.Provider value={agents}>
-                    <TraitListContext.Provider value={traits}>
-                        <TeamBuilder teamList={team} />
-                    </TraitListContext.Provider> 
-                </AgentListContext.Provider>
+                </Box>
+                <Box sx={{ flex: 4 }}>
+                    {/* Displays the TeamBuilder */}
+                    <AgentListContext.Provider value={agents}>
+                        <TraitListContext.Provider value={traits}>
+                            <TeamBuilder teamList={team} />
+                        </TraitListContext.Provider> 
+                    </AgentListContext.Provider>
+                </Box>
+                
             </Stack>
 
             {/* If creating/updating a profile, display the modal (aka pop-up) */}
@@ -300,7 +303,7 @@ function App() {
                     <div className="modal-content">
                         {agents.map((agent, i) => (
                             <button key={i} onClick={() => sortByAgentProficiency(agent.agentID)}>
-                                {agent.agentName}
+                                <img src={agent.agentImg} width="75" height="75"/>
                             </button>
                         ))}
                     </div>

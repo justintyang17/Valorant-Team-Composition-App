@@ -2,51 +2,63 @@ import React from "react"
 import AgentPool from './AgentPool'
 import AgentPool2 from './AgentPool2'
 import Accordion from '@mui/material/Accordion';
-import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box'
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 
 
-const MapPool = ({existingProfileMapPool=[]}) => {
+const MapPool = ({ existingProfileMapPool = [] }) => {
 
     const warningmsg = "WARNING: No Agents Selected for this Map"
 
-    function Message({agentPool}) {
+    function Message({ agentPool }) {
         for (const agent_entry of agentPool) {
             if (agent_entry.proficiency > 0) {
                 return null
             }
         }
         return <h5>{warningmsg}</h5>
-    } 
+    }
+
+    const getMapImg = (mapString) => {
+        return "../images/maps/" + mapString.toLowerCase() + ".webp"
+    }
 
     return (
         <div>
-             {existingProfileMapPool.map((mapObj, i) => (
+            {existingProfileMapPool.map((mapObj, i) => (
                 <div key={i}>
                     <Accordion>
                         <AccordionSummary>
-                            <Grid>
-                                <Grid spacing={6}>
-                                    <h3>Agent Pool for {mapObj.map}</h3>
-                                </Grid>
-                                <Grid>
-                                    <Message
-                                    agentPool = {mapObj.agentPool}
-                                    />
-                                </Grid>
-                            </Grid>
+                            <Box
+                                display="flex"
+                                alignItems="center"
+                                justifyContent="space-between"
+                                width="100%"
+                            >
+                                <Box display="flex" alignItems="center" gap={2}>
+                                        <h3>Agent Pool for {mapObj.map}</h3>
+                                    <Message agentPool={mapObj.agentPool} />
+                                </Box>
+
+                                <img
+                                    src={getMapImg(mapObj.map)}
+                                    width="200"
+                                    height="100"
+                                    alt={`${mapObj.map} map`}
+                                />
+                            </Box>
                         </AccordionSummary>
                         <AccordionDetails>
-                            <AgentPool2 mapAgentPool={mapObj.agentPool} map = {mapObj.map}/>
+                            <AgentPool2 mapAgentPool={mapObj.agentPool} map={mapObj.map} />
                             {/*<AgentPool mapAgentPool={mapObj.agentPool} map = {mapObj.map}/>*/}
                         </AccordionDetails>
                     </Accordion>
-                    
-                    
+
+
                 </div>
             ))}
         </div>
-    ) 
+    )
 }
 export default MapPool

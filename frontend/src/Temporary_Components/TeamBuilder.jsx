@@ -50,10 +50,7 @@ const TeamBuilder = ({ teamList = [] }) => {
     }
 
     const buildComp = (teamList, mapName) => {
-        alert("traits length = " + traits.length)
         let teamMapList = createTeamMapList(teamList, mapName)
-
-        alert("tempMapList created")
         let traitIndex = 0
         let result = []
         bigloop: while (teamMapList.length !== 0) {
@@ -63,7 +60,8 @@ const TeamBuilder = ({ teamList = [] }) => {
             // loop through each player
             for (const playerObj of teamMapList) {
                 if (emptyPool(playerObj)) {
-                    alert(playerObj.name + " doesn't have any agents they can play!")
+                    alert("ERROR: Ran out of agents to play!")
+                    alert("Please add more agents to profiles")
                     return
                 }
                 // loop through each agent in prof = 2 list
@@ -77,7 +75,6 @@ const TeamBuilder = ({ teamList = [] }) => {
                     if (agentTraits.find(trait => trait.trait === currTrait) && !containsAgent(agent, result)) {
                         // 1)
                         const pairObj = { name: playerObj.name, agent: agents.find((a) => a.agentID == agent.agentID) }
-                        alert("Added Player: " + pairObj.name + " on agent " + pairObj.agent.agentName + " for " + currTrait)
                         result.push(pairObj)
                         // 2)
                         traitIndex = (traitIndex + 1) % traitList.length;
@@ -93,14 +90,14 @@ const TeamBuilder = ({ teamList = [] }) => {
             if (!addedPlayer) {
                 for (const playerObj of teamMapList) {
                     if (emptyPool(playerObj)) {
-                        alert(playerObj.name + " doesn't have any agents they can play!")
+                        alert("ERROR: Ran out of agents to play!")
+                        alert("Please add more agents to profiles")
                         return
                     }
                     for (const agent of playerObj.low) {
                         const agentTraits = traits.filter(t => t.agentID === agent.agentID)
                         if (agentTraits.find(trait => trait.trait === currTrait) && !containsAgent(agent, result)) {
                             const pairObj = { name: playerObj.name, agent: agents.find((a) => a.agentID == agent.agentID) }
-                            alert("Added Player: " + pairObj.name + " on agent " + pairObj.agent.agentName + " for " + currTrait)
                             result.push(pairObj)
                             traitIndex = (traitIndex + 1) % traitList.length;
                             teamMapList = teamMapList.filter(player => player.name !== playerObj.name)
@@ -127,8 +124,8 @@ const TeamBuilder = ({ teamList = [] }) => {
         for (let i = 0; i < 5; i++) {
             const playerMapPool = teamList[i].playerMapPool.find(m => m.map == mapName)
             //set up proficiency lists
-            const highProfList = playerMapPool.agentPool.filter(a => a.proficiency == 2)
-            const lowProfList = playerMapPool.agentPool.filter(a => a.proficiency == 1)
+            const highProfList = shuffleArray(playerMapPool.agentPool.filter(a => a.proficiency == 2))
+            const lowProfList = shuffleArray(playerMapPool.agentPool.filter(a => a.proficiency == 1))
 
             //set up agent score
             let agentScore = 0
@@ -142,12 +139,27 @@ const TeamBuilder = ({ teamList = [] }) => {
             const playerObj = { name: teamList[i].playerName, high: highProfList, low: lowProfList, score: agentScore }
             teamMapList.push(playerObj)
         }
-        // sort list based on agent score
-        teamMapList.sort((a, b) => {
-            return a.score - b.score
-        })
+            const lowRisk = [];
+            const highRisk = [];
 
-        return teamMapList
+            for (const playerObj of teamMapList) {
+                if (playerObj.score <= 3) {
+                    lowRisk.push(playerObj); 
+                } else {
+                    highRisk.push(playerObj); 
+                }
+            }
+            const shuffledHighRisk = shuffleArray(highRisk)
+            const finalList = [...lowRisk, ...shuffledHighRisk]
+
+            if (finalList.length !== 5) {
+                alert("HEY")
+            }
+            return finalList
+    }
+
+    const shuffleArray = (array) => {
+        return [...array].sort(() => Math.random() - 0.5);
     }
 
     const containsAgent = (agentName, playerObjList) => {
@@ -199,14 +211,16 @@ const TeamBuilder = ({ teamList = [] }) => {
         {teamModalOpen && <div className="modal">
             <div className="modal-content">
                 <span className="close" onClick={closeTeamModal}>&times;</span>
+                <h3>TEAM COMPOSITION FOR {currMap}</h3>
                 <div style={{ display: "flex", flexDirection: "row", gap: "40px", padding: "20px", justifyContent: "center"}}>
                     {builtTeam.map((player, i) => (
                         <div key={i} style={{ textAlign: "center" }}>
                             <div>{player.name}</div>
-                            <div>{player.agent.agentName}</div>
+                            <img src = {player.agent.agentImg} width="100" length="100"/>
                         </div>
                     ))}
                 </div>
+                <button onClick={() => buildComp(teamList, currMap)}>Remake</button>
             </div>
         </div>}
     </div>

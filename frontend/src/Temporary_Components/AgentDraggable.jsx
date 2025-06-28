@@ -30,36 +30,32 @@ function AgentDraggable(props) {
             cursor: 'grab',
             willChange: 'transform',
             userSelect: 'none',
-            padding: '8px 12px',
+            padding: '5px 5px',
             border: '1px solid #ccc',
             borderRadius: '4px',
             backgroundColor: getColour(),
-            minWidth: '80px',
-            textAlign: 'center',
             boxSizing: 'border-box',
         }
         : {
             cursor: 'grab',
             willChange: 'transform',
             userSelect: 'none',
-            padding: '8px 12px',
+            padding: '5px 10px',
             border: '1px solid #ccc',
             borderRadius: '4px',
             backgroundColor: getColour(),
-            minWidth: '80px',
-            textAlign: 'center',
             boxSizing: 'border-box',
         }
 
 
-    const getAgentName = (ID) => {
+    const getAgentIcon = (ID) => {
         const agent = agentList.find(a => a.agentID == ID)
-        return agent.agentName
+        return agent.agentImg
     }
 
     return (
         <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
-            {getAgentName(id)}
+            <img src={getAgentIcon(id)} width="50" height="50"/>
         </div>
     )
 }
