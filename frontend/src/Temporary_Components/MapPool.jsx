@@ -27,9 +27,9 @@ const MapPool = ({ existingProfileMapPool = [] }) => {
     return (
         <div>
             {existingProfileMapPool.map((mapObj, i) => (
-                <div key={i}>
-                    <Accordion>
-                        <AccordionSummary>
+                <div key={i}> 
+                    <Accordion sx={{ bgcolor: 'rgb(32, 35, 39)', color: 'white', mb: 2, border: "#555", borderRadius: '8px' }}>
+                        <AccordionSummary sx={{ bgcolor: 'rgb(32, 35, 39)', color: 'white'}}>
                             <Box
                                 display="flex"
                                 alignItems="center"
@@ -49,7 +49,7 @@ const MapPool = ({ existingProfileMapPool = [] }) => {
                                 />
                             </Box>
                         </AccordionSummary>
-                        <AccordionDetails>
+                        <AccordionDetails sx={{ bgcolor: 'rgb(53, 57, 62)', color: 'white'}}>
                             <AgentPool2 mapAgentPool={mapObj.agentPool} map={mapObj.map} />
                             {/*<AgentPool mapAgentPool={mapObj.agentPool} map = {mapObj.map}/>*/}
                         </AccordionDetails>

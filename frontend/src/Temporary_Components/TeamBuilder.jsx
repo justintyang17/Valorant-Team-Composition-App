@@ -4,7 +4,7 @@ import { TraitListContext } from './TraitListContext'
 
 const TeamBuilder = ({ teamList = [] }) => {
 
-    const [currMap, setCurrMap] = useState()
+    const [currMap, setCurrMap] = useState("BIND")
     const [builtTeam, setBuiltTeam] = useState([])
     const [teamModalOpen, setTeamModalOpen] = useState(false)
 
@@ -38,9 +38,9 @@ const TeamBuilder = ({ teamList = [] }) => {
     function WarningMessage() {
         const length = teamList.length
         if (length < 5)
-            return <h5>Not Enough Players</h5>
+            return <div className="warning">ERROR : Not Enough Players</div>
         else if (length > 5)
-            return <h5>Too Many Players</h5>
+            return <div className="warning">ERROR : Too Many Players</div>
         else
             return null
     }
@@ -139,23 +139,20 @@ const TeamBuilder = ({ teamList = [] }) => {
             const playerObj = { name: teamList[i].playerName, high: highProfList, low: lowProfList, score: agentScore }
             teamMapList.push(playerObj)
         }
-            const lowRisk = [];
-            const highRisk = [];
+        const lowRisk = []
+        const highRisk = []
 
-            for (const playerObj of teamMapList) {
-                if (playerObj.score <= 3) {
-                    lowRisk.push(playerObj); 
-                } else {
-                    highRisk.push(playerObj); 
-                }
+        for (const playerObj of teamMapList) {
+            if (playerObj.score <= 3) {
+                lowRisk.push(playerObj)
+            } else {
+                highRisk.push(playerObj)
             }
-            const shuffledHighRisk = shuffleArray(highRisk)
-            const finalList = [...lowRisk, ...shuffledHighRisk]
+        }
+        const shuffledHighRisk = shuffleArray(highRisk)
+        const finalList = [...lowRisk, ...shuffledHighRisk]
 
-            if (finalList.length !== 5) {
-                alert("HEY")
-            }
-            return finalList
+        return finalList
     }
 
     const shuffleArray = (array) => {
@@ -187,17 +184,34 @@ const TeamBuilder = ({ teamList = [] }) => {
         setTeamModalOpen(false)
     }
 
-    return <div>
-        <h3>Current Team</h3>
-        <ul style={{ display: 'flex', listStyle: 'none' }}>
+    return <div className="team-builder-layout">
+        <div className="team-names">
             {teamList.map((player) => (
-                <li key={player.id} style={{ marginRight: '10px' }}>{player.playerName}</li>
+                <div className="team-chip" key={player.id}>
+                    {player.playerName}
+                </div>
             ))}
-        </ul>
-        <WarningMessage />
-        <div>
+            <div>
+                <label>Select Map:</label>
+                <select
+                    id="mapSelector"
+                    onChange={(e) => setCurrMap(e.target.value)}>
+                    <option value="" disabled>Select a map</option>
+                    {maps.map((map) => (
+                        <option key={map} value={map}>{map}</option>
+                    ))}
+                </select>
+            </div>
+            <WarningMessage />
+            <button disabled={teamList.length != 5 || currMap == null} onClick={() => buildComp(teamList, currMap)}>Build Comp</button>
+           
+        </div>
+
+
+
+        {/*<div className='map-radio'>
             {maps.map((map) => (
-                <label key={map}>
+                <label className='map-option' key={map}>
                     <input type="radio"
                         name="mapRadio"
                         value={map}
@@ -205,22 +219,21 @@ const TeamBuilder = ({ teamList = [] }) => {
                     {map}
                 </label>
             ))}
-        </div>
-        <button disabled={teamList.length != 5 || currMap == null} onClick={() => buildComp(teamList, currMap)}>Build Comp</button>
+        </div> */}
 
         {teamModalOpen && <div className="modal">
             <div className="modal-content">
                 <span className="close" onClick={closeTeamModal}>&times;</span>
-                <h3>TEAM COMPOSITION FOR {currMap}</h3>
-                <div style={{ display: "flex", flexDirection: "row", gap: "40px", padding: "20px", justifyContent: "center"}}>
+                <h3 style={{ textAlign: "center" }}>TEAM COMPOSITION FOR {currMap}</h3>
+                <div style={{ display: "flex", flexDirection: "row", gap: "40px", padding: "20px", justifyContent: "center" }}>
                     {builtTeam.map((player, i) => (
                         <div key={i} style={{ textAlign: "center" }}>
-                            <div>{player.name}</div>
-                            <img src = {player.agent.agentImg} width="100" length="100"/>
+                            <label>{player.name}</label>
+                            <img src={player.agent.agentImg} width="100" length="100" />
                         </div>
                     ))}
                 </div>
-                <button onClick={() => buildComp(teamList, currMap)}>Remake</button>
+                <button style={{ margin: "auto", display: "block" }} onClick={() => buildComp(teamList, currMap)}>Remake</button>
             </div>
         </div>}
     </div>

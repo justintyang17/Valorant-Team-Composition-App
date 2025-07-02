@@ -243,12 +243,13 @@ function App() {
         
     return (
         <>
-            <h2> Profiles</h2>
+            <h1> Valorant Team Builder </h1>
             <Stack direction="row" spacing={10}>
                 {/* Displays the ProfileList */}
                 <Box sx={{ flex: 3 }}>
+                <h2> Profiles</h2>
                 <ProfileList profiles={profiles} updateProfile={openEditModal} updateCallback={onUpdate} teamCallback={editTeam} />
-                    <>Sort Field:</>
+                    <label>Sort Field:</label>
                     <select
                         id="sortField"
                         onChange={(e) => handleSortField(e.target.value)}>
@@ -258,7 +259,7 @@ function App() {
                         <option value="rank">Rank</option>
                         <option value="agentProf">Agent Proficiency</option>
                     </select>
-                    <>Sort By:</>
+                    <label>Sort By:</label>
                     <select
                         id="sortBy"
                         onChange={(e) => handleSortBy(e.target.value)}>
@@ -271,6 +272,7 @@ function App() {
                     <button onClick={openCreateModal}>Create New Profile</button>
                 </Box>
                 <Box sx={{ flex: 4 }}>
+                <h2> Current Team </h2>
                     {/* Displays the TeamBuilder */}
                     <AgentListContext.Provider value={agents}>
                         <TraitListContext.Provider value={traits}>

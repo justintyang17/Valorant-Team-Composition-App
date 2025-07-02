@@ -7,7 +7,7 @@ function AgentContainer (props) {
     const { setNodeRef } = useDroppable({ id })
 
     const containerStyle = {
-        background: "#dadada",
+        background: 'rgb(32, 35, 39)',
         padding: 10,
         margin: 10,
         flex: 1,

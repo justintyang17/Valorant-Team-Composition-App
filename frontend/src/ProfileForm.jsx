@@ -130,8 +130,8 @@ const ProfileForm = ({ existingProfile = {}, updateCallback }) => {
     // value => the default value that appears in the text box
     // onChange => if the value of text box changes, set the corresponding global variable to that value
     return (
-        <form onSubmit={onSubmit}>
-            <div>
+        <form onSubmit={onSubmit} className="profile-form">
+            <div className="form-element">
                 <label htmlFor="playerName">Player's Name</label>
                 <input
                     type="text"
@@ -139,7 +139,7 @@ const ProfileForm = ({ existingProfile = {}, updateCallback }) => {
                     value={playerName}
                     onChange={(e) => setPlayerName(e.target.value)} />
             </div>
-            <div>
+            <div className="form-element">
                 <label htmlFor="playerUser">Player's Username</label>
                 <input
                     type="text"
@@ -147,7 +147,7 @@ const ProfileForm = ({ existingProfile = {}, updateCallback }) => {
                     value={playerUser}
                     onChange={(e) => setPlayerUser(e.target.value)} />
             </div>
-            <div>
+            <div className="form-element">
                 <label htmlFor="playerRank">Player's Rank</label>
                 <select
                     id="playerRank"

@@ -45,7 +45,7 @@ const ProfileList = ({profiles, updateProfile, updateCallback, teamCallback}) =>
                             {/* BUTTON: Calls onDelete when pressed */}
                             <button onClick={() => onDelete(profile.id)}>Delete</button>
                         </td>
-                        <td>
+                        <td align="center">
                             <TeamCheckBox profile={profile} teamCallback={teamCallback}/>
                         </td>
                     </tr>
