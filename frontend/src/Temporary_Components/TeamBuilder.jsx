@@ -1,12 +1,14 @@
-import { use, useContext, useState } from 'react'
+import { useEffect, useContext, useState } from 'react'
 import { AgentListContext } from './AgentListContext'
 import { TraitListContext } from './TraitListContext'
 
 const TeamBuilder = ({ teamList = [] }) => {
 
     const [currMap, setCurrMap] = useState("BIND")
-    const [builtTeam, setBuiltTeam] = useState([])
+    const [completedComp, setCompletedComp] = useState([])
     const [teamModalOpen, setTeamModalOpen] = useState(false)
+
+    const [teamBuilt, setTeamBuilt] = useState(false)
 
     const agents = useContext(AgentListContext)
     const traits = useContext(TraitListContext)
@@ -44,6 +46,18 @@ const TeamBuilder = ({ teamList = [] }) => {
         else
             return null
     }
+
+    useEffect(() => {
+        if (teamList.length !== 5 && teamBuilt) {
+            setTeamBuilt(false)
+        }
+    }, [teamList])
+
+    useEffect(() => {
+        if (teamBuilt) {
+            setTeamBuilt(false)
+        }
+    }, [currMap])
 
     const handleRadio = (e) => {
         setCurrMap(e.target.value)
@@ -114,8 +128,9 @@ const TeamBuilder = ({ teamList = [] }) => {
             }
         }
 
-        setBuiltTeam(result)
-        setTeamModalOpen(true)
+        setCompletedComp(result)
+        // setTeamModalOpen(true)
+        setTeamBuilt(true)
     }
 
     const createTeamMapList = (teamList, mapName) => {
@@ -184,56 +199,84 @@ const TeamBuilder = ({ teamList = [] }) => {
         setTeamModalOpen(false)
     }
 
-    return <div className="team-builder-layout">
-        <div className="team-names">
-            {teamList.map((player) => (
-                <div className="team-chip" key={player.id}>
-                    {player.playerName}
-                </div>
+    const PlayerAgentCards = () => {
+        let temp = []
+        for (let i = 0; i < 5; i++) {
+            if (teamList[i] != null) {
+                temp.push(PlayerAgentCard(teamList[i]))
+            } else {
+                temp.push(unknownCard)
+            }
+        }
+        return <div style={{ display: 'flex', gap: '40px', padding: '10px'}}>
+            {temp.map((card, i) => (
+                <div key={i}>{card}</div>
             ))}
-            <div>
-                <label>Select Map:</label>
-                <select
-                    id="mapSelector"
-                    onChange={(e) => setCurrMap(e.target.value)}>
-                    <option value="" disabled>Select a map</option>
-                    {maps.map((map) => (
-                        <option key={map} value={map}>{map}</option>
-                    ))}
-                </select>
-            </div>
-            <WarningMessage />
-            <button disabled={teamList.length != 5 || currMap == null} onClick={() => buildComp(teamList, currMap)}>Build Comp</button>
-           
+        </div>
+    }
+
+    const unknownCard =
+        <div>
+            <img src="../images/agents/unknown.png" width="100" length="100" />
+            <br />
+            <label style={{ color: 'white' }}>???</label>
         </div>
 
 
+    const PlayerAgentCard = (player) => {
+        if (!teamBuilt) {
+            return <div>
+                <img src="../images/agents/unknown.png" width="100" length="100" />
+                <br />
+                <label style={{ color: 'white' }}>{player.playerName}</label>
+            </div>
+        } else {
+            const agentImgString = completedComp.find((pair) => pair.name == player.playerName).agent.agentImg
+            return <div>
+                <img src={agentImgString} width="100" length="100" />
+                <br />
+                <label style={{ color: 'white' }}>{player.playerName}</label>
+            </div>
+        }
 
-        {/*<div className='map-radio'>
-            {maps.map((map) => (
-                <label className='map-option' key={map}>
-                    <input type="radio"
-                        name="mapRadio"
-                        value={map}
-                        onChange={handleRadio} />
-                    {map}
-                </label>
-            ))}
-        </div> */}
+    }
+
+    return <div className="team-builder-layout">
+        <div className="team-names">
+            <WarningMessage/>
+            <PlayerAgentCards />
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                    <label>Current Map:</label>
+                    <select
+                        id="mapSelector"
+                        onChange={(e) => setCurrMap(e.target.value)}>
+                        <option value="" disabled>Select a map</option>
+                        {maps.map((map) => (
+                            <option key={map} value={map}>{map}</option>
+                        ))}
+                    </select>
+                </div>
+                <button disabled={teamList.length != 5 || currMap == null} onClick={() => buildComp(teamList, currMap)}>{teamBuilt ? "Remake Team" : "Build Team"}</button>
+            </div>
+        </div>
+
+
 
         {teamModalOpen && <div className="modal">
             <div className="modal-content">
                 <span className="close" onClick={closeTeamModal}>&times;</span>
                 <h3 style={{ textAlign: "center" }}>TEAM COMPOSITION FOR {currMap}</h3>
                 <div style={{ display: "flex", flexDirection: "row", gap: "40px", padding: "20px", justifyContent: "center" }}>
-                    {builtTeam.map((player, i) => (
+                    {completedComp.map((player, i) => (
                         <div key={i} style={{ textAlign: "center" }}>
                             <label>{player.name}</label>
                             <img src={player.agent.agentImg} width="100" length="100" />
                         </div>
                     ))}
                 </div>
-                <button style={{ margin: "auto", display: "block" }} onClick={() => buildComp(teamList, currMap)}>Remake</button>
+                <button onClick={() => buildComp(teamList, currMap)}>Remake</button>
             </div>
         </div>}
     </div>
