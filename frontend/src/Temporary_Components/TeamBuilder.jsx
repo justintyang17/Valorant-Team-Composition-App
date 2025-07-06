@@ -6,7 +6,6 @@ const TeamBuilder = ({ teamList = [] }) => {
 
     const [currMap, setCurrMap] = useState("BIND")
     const [completedComp, setCompletedComp] = useState([])
-    const [teamModalOpen, setTeamModalOpen] = useState(false)
 
     const [teamBuilt, setTeamBuilt] = useState(false)
 
@@ -58,10 +57,6 @@ const TeamBuilder = ({ teamList = [] }) => {
             setTeamBuilt(false)
         }
     }, [currMap])
-
-    const handleRadio = (e) => {
-        setCurrMap(e.target.value)
-    }
 
     const buildComp = (teamList, mapName) => {
         let teamMapList = createTeamMapList(teamList, mapName)
@@ -129,7 +124,6 @@ const TeamBuilder = ({ teamList = [] }) => {
         }
 
         setCompletedComp(result)
-        // setTeamModalOpen(true)
         setTeamBuilt(true)
     }
 
@@ -195,10 +189,6 @@ const TeamBuilder = ({ teamList = [] }) => {
         return playerObj.high.length == 0 && playerObj.low.length == 0
     }
 
-    const closeTeamModal = () => {
-        setTeamModalOpen(false)
-    }
-
     const PlayerAgentCards = () => {
         let temp = []
         for (let i = 0; i < 5; i++) {
@@ -216,29 +206,25 @@ const TeamBuilder = ({ teamList = [] }) => {
     }
 
     const unknownCard =
-        <div>
-            <img src="../images/agents/unknown.png" width="100" length="100" />
-            <br />
+        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+            <img src="../images/agents/unknown.png" width="100" height="100" />
             <label style={{ color: 'white' }}>???</label>
         </div>
 
 
     const PlayerAgentCard = (player) => {
         if (!teamBuilt) {
-            return <div>
-                <img src="../images/agents/unknown.png" width="100" length="100" />
-                <br />
+            return <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                <img src="../images/agents/unknown.png" width="100" height="100" />
                 <label style={{ color: 'white' }}>{player.playerName}</label>
             </div>
         } else {
             const agentImgString = completedComp.find((pair) => pair.name == player.playerName).agent.agentImg
-            return <div>
-                <img src={agentImgString} width="100" length="100" />
-                <br />
+            return <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                <img src={agentImgString} width="100" height="100" />
                 <label style={{ color: 'white' }}>{player.playerName}</label>
             </div>
         }
-
     }
 
     return <div className="team-builder-layout">
@@ -261,24 +247,6 @@ const TeamBuilder = ({ teamList = [] }) => {
                 <button disabled={teamList.length != 5 || currMap == null} onClick={() => buildComp(teamList, currMap)}>{teamBuilt ? "Remake Team" : "Build Team"}</button>
             </div>
         </div>
-
-
-
-        {teamModalOpen && <div className="modal">
-            <div className="modal-content">
-                <span className="close" onClick={closeTeamModal}>&times;</span>
-                <h3 style={{ textAlign: "center" }}>TEAM COMPOSITION FOR {currMap}</h3>
-                <div style={{ display: "flex", flexDirection: "row", gap: "40px", padding: "20px", justifyContent: "center" }}>
-                    {completedComp.map((player, i) => (
-                        <div key={i} style={{ textAlign: "center" }}>
-                            <label>{player.name}</label>
-                            <img src={player.agent.agentImg} width="100" length="100" />
-                        </div>
-                    ))}
-                </div>
-                <button onClick={() => buildComp(teamList, currMap)}>Remake</button>
-            </div>
-        </div>}
     </div>
 }
 

@@ -222,14 +222,14 @@ function App() {
     const editTeam = (profile, onTeam) => {
         let newTeam = []
         if (onTeam) {
-            if (!team.find(p=>p.id === profile.id)) {
+            if (!team.find(p => p.id === profile.id)) {
                 newTeam = [...team, profile]
             }
         } else {
-            newTeam = team.filter(p=>p.id !== profile.id)
+            newTeam = team.filter(p => p.id !== profile.id)
         }
         setTeam(newTeam)
-      }
+    }
 
     const updateTeam = (profile) => {
         const tempTeam = [...team]
@@ -240,48 +240,52 @@ function App() {
         }
     }
     //#endregion
-        
+
     return (
         <>
-            <h1> Valorant Team Builder </h1>
-            <Stack direction="row" spacing={10}>
+            <h1> Valorant Composition Builder </h1>
+            <div style={{ display: 'flex', justifyContent: 'space-evenly', alignItems: 'stretch' }}>
                 {/* Displays the ProfileList */}
-                <Box sx={{ flex: 3 }}>
-                <h2> Profiles</h2>
-                <ProfileList profiles={profiles} updateProfile={openEditModal} updateCallback={onUpdate} teamCallback={editTeam} />
-                    <label>Sort Field:</label>
-                    <select
-                        id="sortField"
-                        onChange={(e) => handleSortField(e.target.value)}>
-                        <option value="none">None</option>
-                        <option value="name">Name</option>
-                        <option value="username">Username</option>
-                        <option value="rank">Rank</option>
-                        <option value="agentProf">Agent Proficiency</option>
-                    </select>
-                    <label>Sort By:</label>
-                    <select
-                        id="sortBy"
-                        onChange={(e) => handleSortBy(e.target.value)}>
-                        <option value="none">None</option>
-                        <option value="ascending">Ascending</option>
-                        <option value="descending">Descending</option>
-                    </select>
-                    
-                    {/* BUTTON: Calls openCreateModal when pressed */}
-                    <button onClick={openCreateModal}>Create New Profile</button>
-                </Box>
-                <Box sx={{ flex: 4 }}>
-                <h2> Current Team </h2>
+                <div>
+                    <h2> Profiles</h2>
+                    <ProfileList profiles={profiles} updateProfile={openEditModal} updateCallback={onUpdate} teamCallback={editTeam} />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1% 0'}}>
+                        <div>
+                            <label>Sort Field:</label>
+                            <select
+                                id="sortField"
+                                onChange={(e) => handleSortField(e.target.value)}>
+                                <option value="none">None</option>
+                                <option value="name">Name</option>
+                                <option value="username">Username</option>
+                                <option value="rank">Rank</option>
+                                <option value="agentProf">Agent Proficiency</option>
+                            </select>
+                            <label>Sort By:</label>
+                            <select
+                                id="sortBy"
+                                onChange={(e) => handleSortBy(e.target.value)}>
+                                <option value="none">None</option>
+                                <option value="ascending">Ascending</option>
+                                <option value="descending">Descending</option>
+                            </select>
+                        </div>
+                        {/* BUTTON: Calls openCreateModal when pressed */}
+                        <button onClick={openCreateModal}>Create New Profile</button>
+                    </div>
+
+                </div>
+                <div>
+                    <h2> Current Team </h2>
                     {/* Displays the TeamBuilder */}
                     <AgentListContext.Provider value={agents}>
                         <TraitListContext.Provider value={traits}>
                             <TeamBuilder teamList={team} />
-                        </TraitListContext.Provider> 
+                        </TraitListContext.Provider>
                     </AgentListContext.Provider>
-                </Box>
-                
-            </Stack>
+                </div>
+
+            </div>
 
             {/* If creating/updating a profile, display the modal (aka pop-up) */}
             {isProfileModalOpen && <div className="modal">
@@ -293,7 +297,7 @@ function App() {
                     {/* Displays the ProfileForm */}
                     <AgentListContext.Provider value={agents}>
 
-                            <ProfileForm existingProfile={currentProfile} updateCallback={onUpdate} />
+                        <ProfileForm existingProfile={currentProfile} updateCallback={onUpdate} />
 
                     </AgentListContext.Provider>
                 </div>
@@ -305,7 +309,7 @@ function App() {
                     <div className="modal-content">
                         {agents.map((agent, i) => (
                             <button key={i} onClick={() => sortByAgentProficiency(agent.agentID)}>
-                                <img src={agent.agentImg} width="75" height="75"/>
+                                <img src={agent.agentImg} width="75" height="75" />
                             </button>
                         ))}
                     </div>
