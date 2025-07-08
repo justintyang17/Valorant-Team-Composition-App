@@ -11,19 +11,43 @@ My app makes the agent-selection phase simple and easy by allowing players to cr
 ## 🔧 Tech Stack
 
 ### Backend
--  Flask (Python)
+-  Python Flask
 -  SQL Alchemy
 -  SQLite
 
-### Database Structure
-
 ### Frontend
--  React (Javascript)
-  -  Node JS  
-  -  Material UI
-  -  dnd-kit (Drag and Drop)
+-  React Javascript
+    - Node.js 
+    - Material UI
+    - dnd-kit (Drag and Drop)
 -  CSS + HMTL
-
-### Teambuilder Algorithm
   
+## 🔨 Database Structure
+<img width="848" height="464" alt="Image" src="https://github.com/user-attachments/assets/c5fe2d31-52d5-4975-a9e9-b98baf7f6efd" />
+
+## 🔬 Teambuilder Algorithm
+<ins>Glossary:</ins>
+- **pairObj** = An object that holds:
+    - a player's name
+    - the agent selected by the algorithm
+- **playerObj** = An object that holds:
+    - a player's name
+    - their high proficiency list (agents they can use well on a given map) 
+    - their low proficiency list (agents they can use all right on a given map)
+- **teamMapList** = List of **playerObj**s
+- **traitList** = List of traits (aka roles) ordered by their importance for an ideal team composition
+
+<ins>Procedure:</ins>
+1) Each player gets coverted into a **playerObj** and placed into the **teamMapList**
+2) The **teamMapList** is sorted, those with lower total proficiencies (meaning they can use fewer agents) are put at the front of the list
+3) For each **playerObj** in **teamMapList**:
+    - Check player's high proficiency list for any agent that has current trait
+    - Check player's low proficiency list for any agent that has current trait
+    - Else, increment the current trait index and repeat
+4) Once a match is found, the **playerObj** is removed from the **teamMapList** and turned into a **pairObj** with chosen agent
+5) Repeat steps 3) to 4) with the rest of the **teamMapList** until empty
+
 ## 🚀 Potential Features for the Future
+- Locking player-agents pairs in teambuilder
+- Filter for player list
+- Custom Tags for player list for organization
