@@ -21,7 +21,27 @@ My app makes the agent-selection phase simple and easy by allowing players to cr
     - Material UI
     - dnd-kit (Drag and Drop)
 -  CSS + HMTL
-  
+
+## ▶️ How to Run the Program
+1) Clone the repo and open the folder
+```
+git clone https://github.com/justintyang17/Valo-App.git
+```
+2) Split the terminal
+3) In one of the terminals run:
+```
+cd backend
+pip install -r requirements.txt
+python main.py
+```
+4) In the other terminal run:
+```
+cd frontend
+npm install
+npm run dev
+```
+5) Open http://localhost:5173/ in a browser
+
 ## 🔨 Database Structure
 <img width="848" height="464" alt="Image" src="https://github.com/user-attachments/assets/c5fe2d31-52d5-4975-a9e9-b98baf7f6efd" />
 
@@ -51,3 +71,23 @@ My app makes the agent-selection phase simple and easy by allowing players to cr
 - Locking player-agents pairs in teambuilder
 - Filter for player list
 - Custom Tags for player list for organization
+
+## 📓 Resources Used
+Project Foundation:
+https://www.youtube.com/watch?v=PppslXOR7TA
+
+General Information:
+https://www.w3schools.com/
+
+React Hooks:
+https://www.youtube.com/watch?v=V9i3cGD-mts&list=PLApy4UwQM3UrZsBTY111R6P4frt6WK-G2
+
+Database Design:
+https://www.youtube.com/watch?v=lgiQLBwPmTQ
+
+SQLAlchemy Relationships:
+https://docs.sqlalchemy.org/en/20/orm/relationships.html
+
+dnd-kit:
+https://codesandbox.io/p/sandbox/dnd-kit-multi-containers-lknfe?file=%2Fsrc%2Fapp.js
+
