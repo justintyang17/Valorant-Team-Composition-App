@@ -22,6 +22,11 @@ My app makes the agent-selection phase simple and easy by allowing players to cr
     - dnd-kit (Drag and Drop)
 -  CSS + HMTL
 
+## 🔎 App Demo 
+![](https://github.com/justintyang17/Valo-App/blob/main/CreateProfile.gif)
+
+![](https://github.com/justintyang17/Valo-App/blob/main/BuildingTeam.gif)
+
 ## ▶️ How to Run the Program
 1) Clone the repo and open the folder
 ```
