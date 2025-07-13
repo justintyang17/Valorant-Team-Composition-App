@@ -10,10 +10,6 @@ import Box from '@mui/material/Box'
 
 // App component
 function App() {
-    // "Global Variables"
-    // 1) profiles = all profiles in db
-    // 2) isModalOpen = if ProfileForm is open
-    // 3) currentProfile = profile that is being created/updated
 
     const [profiles, setProfiles] = useState([])
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
@@ -57,25 +53,25 @@ function App() {
         setTraits(data.traits)
     }
 
-
-    // sets isModalOpen = False and clears currentProfile
+    // sets isProfileModalOpen = False and clears currentProfile
     const closeProfileModal = () => {
         setIsProfileModalOpen(false)
         setCurrentProfile({})
     }
 
-    // sets isModalOpen = False and clears currentProfile
+    // sets isSortModalOpen = False and clears currentProfile
     const closeSortModal = () => {
         setIsSortModalOpen(false)
     }
 
-    // Create Profile: sets isModalOpen = True if it isn't already open
+    // Create Profile: sets isProfileModalOpen = True if it isn't already open
     const openCreateModal = () => {
         if (!isProfileModalOpen) {
             setIsProfileModalOpen(true)
         }
     }
 
+    // sets isSortModalOpen = True if it isn't already open
     const openSortModal = () => {
         if (!isSortModalOpen) {
             setIsSortModalOpen(true)
@@ -106,20 +102,24 @@ function App() {
         closeSortModal()
     }
 
+    // sets sort field state
     const handleSortField = (field) => {
         setSortField(field)
     }
 
+    // sets sort by state
     const handleSortBy = (by) => {
         setSortBy(by)
     }
 
+    // whenever sortField or sortBy is changed, run sort function
     useEffect(() => {
         if (sortField !== "none" && sortBy !== "none") {
             handleSort(sortField, sortBy);
         }
     }, [sortField, sortBy]);
 
+    // sort function
     const handleSort = (sortField, sortBy) => {
         const ascending = (sortBy == "ascending")
         switch (sortField) {
@@ -139,6 +139,7 @@ function App() {
         }
     }
 
+    // sort by name function 
     const sortByName = (ascending) => {
         const sortedprofiles = profiles.toSorted((a, b) => {
             const nameA = a.playerName.toUpperCase()
@@ -149,6 +150,7 @@ function App() {
         onSort()
     }
 
+    // sort by username function 
     const sortByUsername = (ascending) => {
         const sortedprofiles = profiles.toSorted((a, b) => {
             const usernameA = a.playerUser.toUpperCase()
@@ -187,6 +189,7 @@ function App() {
         RADIANT: 25
     }
 
+    // sort by rank function 
     const sortByRank = (ascending) => {
         const sortedprofiles = profiles.toSorted((a, b) => {
             return ascending ? rankOrder[a.playerRank] - rankOrder[b.playerRank] : rankOrder[b.playerRank] - rankOrder[a.playerRank]
@@ -194,6 +197,7 @@ function App() {
         setProfiles(sortedprofiles)
     }
 
+    // sort by agent proficiency function 
     const sortByAgentProficiency = (agentID) => {
         const ascending = (sortBy == "ascending")
         const sortedprofiles = profiles.toSorted((a, b) => {
@@ -205,6 +209,7 @@ function App() {
         setIsSortModalOpen(false)
     }
 
+    // gets sum of proficiencies over all maps for given player
     const getAgentProficiency = (profile, ID) => {
         let total = 0
         for (const map_pool_entry of profile.playerMapPool) {
@@ -219,6 +224,8 @@ function App() {
     //#endregion
 
     //#region: TEAMBUIDLER
+
+    // adds/removes player from current team
     const editTeam = (profile, onTeam) => {
         let newTeam = []
         if (onTeam) {
@@ -231,6 +238,7 @@ function App() {
         setTeam(newTeam)
     }
 
+    // refreshes team information whenever profile edited
     const updateTeam = (profile) => {
         const tempTeam = [...team]
         const index = tempTeam.findIndex(p => p.id === profile.id)
