@@ -72,6 +72,7 @@ npm run dev
     - Else, increment the current trait index and repeat
 4) Once a match is found, the **playerObj** is removed from the **teamMapList** and turned into a **pairObj** with chosen agent
 5) Repeat steps 3) to 4) with the rest of the **teamMapList** until empty
+6) Once algorithm is complete, user is left with 5 **pairObjs** that represent each player and the agent they will use
 
 ## 🚀 Potential Features for the Future
 - Locking player-agents pairs in teambuilder
